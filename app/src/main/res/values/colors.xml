@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Primary Colors -->
+    <color name="primary">#0040A1</color>
+    <color name="primary_container">#0056D2</color>
+    <color name="on_primary">#FFFFFF</color>
+    <color name="primary_fixed">#DAE2FF</color>
+    <color name="on_primary_fixed">#001847</color>
+
+    <!-- Surface & Background -->
+    <color name="background">#F9F9FC</color>
+    <color name="surface">#F9F9FC</color>
+    <color name="surface_container">#EEEEF0</color>
+    <color name="surface_container_low">#F3F3F6</color>
+    <color name="surface_container_lowest">#FFFFFF</color>
+    <color name="surface_container_high">#E8E8EA</color>
+    <color name="surface_container_highest">#E2E2E5</color>
+    <color name="on_surface">#1A1C1E</color>
+    <color name="on_surface_variant">#424654</color>
+    <color name="outline">#737785</color>
+    <color name="outline_variant">#C3C6D6</color>
+
+    <!-- Semantic Colors -->
+    <color name="secondary">#8E4E00</color>
+    <color name="secondary_container">#FD9000</color>
+    <color name="on_secondary_container">#613400</color>
+    <color name="tertiary">#00531E</color>
+    <color name="error">#BA1A1A</color>
+    <color name="error_container">#FFDAD6</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+</resources>
