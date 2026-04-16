@@ -27,7 +27,6 @@
 
         <activity android:name=".RegisterActivity" android:exported="false" />
         <activity android:name=".MainActivity" android:exported="false" />
-        <activity android:name=".CreateQuizActivity" android:exported="false" />
         <activity android:name=".QuizActivity" android:exported="false" />
 
     </application>
