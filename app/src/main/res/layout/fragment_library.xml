@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:clipToPadding="false"
     android:paddingBottom="100dp">
 
@@ -15,105 +16,82 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Kho Kiến Thức"
+            android:layout_marginTop="24dp"
+            android:text="Your Library 📚"
             android:textColor="@color/on_surface"
-            android:textSize="32sp"
+            android:textSize="28sp"
             android:textStyle="bold" />
 
         <TextView
+            android:id="@+id/tv_quiz_count"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Bộ sưu tập các thử thách nhận thức và cột mốc học tập của bạn."
-            android:textColor="@color/on_surface_variant"
-            android:textSize="16sp" />
+            android:text="0 saved quizzes"
+            android:textColor="@color/on_surface_secondary"
+            android:textSize="14sp" />
 
         <!-- Search Bar -->
-        <com.google.android.material.card.MaterialCardView
+        <EditText
+            android:id="@+id/et_search"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_input_field"
+            android:drawableStart="@android:drawable/ic_menu_search"
+            android:drawablePadding="12dp"
+            android:hint="Search quizzes..."
+            android:inputType="text"
+            android:paddingHorizontal="16dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/outline_variant"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:id="@+id/library_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            app:cardBackgroundColor="@color/surface_container_low"
-            app:cardCornerRadius="16dp"
-            app:strokeWidth="0dp">
+            android:orientation="vertical">
 
+            <!-- Empty State -->
             <LinearLayout
+                android:id="@+id/empty_state"
                 android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:visibility="gone">
 
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@android:drawable/ic_menu_search"
-                    app:tint="@color/outline" />
+                <TextView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:background="@drawable/bg_icon_blue"
+                    android:gravity="center"
+                    android:text="📭"
+                    android:textSize="40sp" />
 
-                <EditText
-                    android:layout_width="match_parent"
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="12dp"
-                    android:background="@android:color/transparent"
-                    android:hint="Tìm kiếm trong thư viện..."
-                    android:textColorHint="@color/outline"
-                    android:textSize="16sp" />
+                    android:layout_marginTop="16dp"
+                    android:text="No quizzes yet"
+                    android:textColor="@color/on_surface"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center"
+                    android:text="Create your first quiz to see it here"
+                    android:textColor="@color/on_surface_secondary"
+                    android:textSize="14sp" />
             </LinearLayout>
-        </com.google.android.material.card.MaterialCardView>
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
-            android:paddingStart="4dp"
-            android:paddingEnd="4dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Học phần gần đây"
-                android:textColor="@color/outline"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:textAllCaps="true"
-                android:letterSpacing="0.1" />
-
-            <TextView
-                android:id="@+id/tv_total_quizzes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:background="@color/primary_fixed"
-                android:paddingStart="8dp"
-                android:paddingTop="2dp"
-                android:paddingEnd="8dp"
-                android:paddingBottom="2dp"
-                android:text="0 TỔNG SỐ"
-                android:textColor="@color/primary"
-                android:textSize="10sp"
-                android:textStyle="bold" />
-        </RelativeLayout>
-
-        <!-- Dynamic Quiz Cards List -->
-        <LinearLayout
-            android:id="@+id/quiz_list_container"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:orientation="vertical" />
-
-        <!-- Empty State -->
-        <TextView
-            android:id="@+id/tv_empty_state"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="48dp"
-            android:gravity="center"
-            android:text="Chưa có bộ câu hỏi nào.\nHãy tạo một bộ mới để bắt đầu học!"
-            android:textColor="@color/on_surface_variant"
-            android:textSize="14sp"
-            android:visibility="visible" />
+        </LinearLayout>
 
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

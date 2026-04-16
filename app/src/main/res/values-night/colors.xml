@@ -1,29 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Colors (Light blue for dark mode) -->
-    <color name="primary">#B2C5FF</color>
-    <color name="primary_container">#0040A1</color>
-    <color name="on_primary">#002D71</color>
-    <color name="primary_fixed">#0040A1</color>
-    <color name="on_primary_fixed">#DAE2FF</color>
+    <!-- Brand Colors (Night Mode) -->
+    <color name="primary">#3B82F6</color>
+    <color name="primary_variant">#60A5FA</color>
+    <color name="on_primary">#000000</color>
 
-    <!-- Surface & Background (Dark tones) -->
-    <color name="background">#1A1C1E</color>
-    <color name="surface">#1A1C1E</color>
-    <color name="surface_container">#2F3133</color>
-    <color name="surface_container_low">#1F1F23</color>
-    <color name="surface_container_lowest">#0F1113</color>
-    <color name="surface_container_high">#3A3C3F</color>
-    <color name="surface_container_highest">#424447</color>
-    <color name="on_surface">#E2E2E5</color>
-    <color name="on_surface_variant">#C3C6D6</color>
-    <color name="outline">#8E919F</color>
-    <color name="outline_variant">#424654</color>
+    <color name="secondary">#FF7E21</color>
+    <color name="on_secondary">#000000</color>
+
+    <!-- Background & Surfaces -->
+    <color name="background">#0F172A</color>
+    <color name="surface">#1E293B</color>
+    <color name="surface_variant">#334155</color>
+    <color name="on_surface">#F8FAFC</color>
+    <color name="on_surface_secondary">#94A3B8</color>
 
     <!-- Semantic Colors -->
-    <color name="secondary">#FFB778</color>
-    <color name="secondary_container">#6C3A00</color>
-    <color name="on_secondary_container">#FFDCC1</color>
-    <color name="tertiary">#3CE36A</color>
-    <color name="error">#FFB4AB</color>
+    <color name="success">#22C55E</color>
+    <color name="error">#EF4444</color>
+    <color name="warning">#F59E0B</color>
+
+    <!-- Borders & Outlines -->
+    <color name="outline">#334155</color>
 </resources>

@@ -3,6 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     android:clipToPadding="false"
     android:paddingBottom="100dp">
 
@@ -10,13 +11,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="20dp">
+        android:padding="24dp">
 
         <TextView
             android:id="@+id/home_welcome_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Chào mừng trở lại!"
+            android:layout_marginTop="24dp"
+            android:text="Hello, John Doe! 👋"
             android:textColor="@color/on_surface"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -25,321 +27,326 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Sẵn sàng làm chủ kiến thức hôm nay chưa?"
-            android:textColor="@color/on_surface_variant"
-            android:textSize="18sp" />
+            android:text="Ready to learn something new?"
+            android:textColor="@color/on_surface_secondary"
+            android:textSize="14sp" />
 
-        <!-- Bento Grid Section -->
-        <LinearLayout
+        <!-- Streak Card -->
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:orientation="vertical">
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="@color/surface">
 
-            <!-- Daily Goal Card -->
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:cardBackgroundColor="@color/surface_container_low"
-                app:cardCornerRadius="24dp"
-                app:strokeWidth="0dp">
+                android:orientation="vertical"
+                android:padding="20dp">
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="24dp">
-
-                    <RelativeLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
+                    android:layout_height="wrap_content">
+                    
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Current Streak"
+                            android:textColor="@color/on_surface_secondary"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
 
                         <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="vertical">
+                            android:gravity="bottom"
+                            android:orientation="horizontal">
 
                             <TextView
+                                android:id="@+id/streak_count"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Mục tiêu hàng ngày"
-                                android:textColor="@color/on_surface"
-                                android:textSize="20sp"
+                                android:text="10"
+                                android:textColor="@color/secondary"
+                                android:textSize="40sp"
                                 android:textStyle="bold" />
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="85% MỤC TIÊU ĐÃ HOÀN THÀNH"
-                                android:textColor="@color/on_surface_variant"
-                                android:textSize="12sp"
+                                android:layout_marginStart="4dp"
+                                android:layout_marginBottom="8dp"
+                                android:text="days"
+                                android:textColor="@color/on_surface_secondary"
+                                android:textSize="16sp"
                                 android:textStyle="bold" />
                         </LinearLayout>
 
-                        <com.google.android.material.card.MaterialCardView
-                            android:layout_width="48dp"
-                            android:layout_height="48dp"
-                            android:layout_alignParentEnd="true"
-                            app:cardBackgroundColor="@color/primary_container"
-                            app:cardCornerRadius="24dp"
-                            app:strokeWidth="0dp">
-
-                            <ImageView
-                                android:layout_width="24dp"
-                                android:layout_height="24dp"
-                                android:layout_gravity="center"
-                                android:src="@android:drawable/ic_menu_compass"
-                                app:tint="@color/on_primary" />
-                        </com.google.android.material.card.MaterialCardView>
-                    </RelativeLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
-                        android:gravity="center_vertical"
-                        android:orientation="horizontal">
-
-                        <FrameLayout
-                            android:layout_width="120dp"
-                            android:layout_height="120dp">
-
-                            <ProgressBar
-                                style="?android:attr/progressBarStyleHorizontal"
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:indeterminate="false"
-                                android:max="100"
-                                android:progress="85"
-                                android:progressDrawable="@android:drawable/progress_horizontal" />
-
-                            <LinearLayout
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_gravity="center"
-                                android:gravity="center"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="17"
-                                    android:textColor="@color/on_surface"
-                                    android:textSize="28sp"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:text="Bài tập"
-                                    android:textColor="@color/on_surface_variant"
-                                    android:textSize="10sp"
-                                    android:textStyle="bold" />
-                            </LinearLayout>
-                        </FrameLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <TextView
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="16dp"
-                            android:orientation="vertical">
-
-                            <com.google.android.material.card.MaterialCardView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                app:cardBackgroundColor="@color/surface_container_lowest"
-                                app:cardCornerRadius="12dp"
-                                app:strokeWidth="0dp">
-
-                                <LinearLayout
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:padding="12dp">
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Cột mốc tiếp theo"
-                                        android:textColor="@color/on_surface_variant"
-                                        android:textSize="10sp"
-                                        android:textStyle="bold" />
-
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="Nắm vững 20 khái niệm"
-                                        android:textColor="@color/on_surface"
-                                        android:textSize="12sp"
-                                        android:textStyle="bold" />
-                                </LinearLayout>
-                            </com.google.android.material.card.MaterialCardView>
-
-                            <com.google.android.material.button.MaterialButton
-                                android:id="@+id/btn_continue_learning"
-                                android:layout_width="match_parent"
-                                android:layout_height="56dp"
-                                android:layout_marginTop="12dp"
-                                android:text="Tiếp tục học tập"
-                                android:textAllCaps="false"
-                                android:textStyle="bold"
-                                app:cornerRadius="16dp" />
-                        </LinearLayout>
+                            android:layout_marginTop="4dp"
+                            android:text="Keep it up! Don't break the chain 🔥"
+                            android:textColor="@color/on_surface_secondary"
+                            android:textSize="12sp" />
                     </LinearLayout>
-                </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
-
-            <!-- Streak Card -->
-            <com.google.android.material.card.MaterialCardView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                app:cardBackgroundColor="@color/surface_container_low"
-                app:cardCornerRadius="24dp"
-                app:strokeWidth="0dp">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:padding="24dp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Chuỗi hiện tại"
-                        android:textColor="@color/on_surface"
-                        android:textSize="20sp"
-                        android:textStyle="bold" />
+                        android:layout_alignParentEnd="true"
+                        android:text="🔥"
+                        android:textSize="32sp" />
+                </RelativeLayout>
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
-                        android:gravity="bottom"
-                        android:orientation="horizontal">
+                <!-- Weekdays -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal"
+                    android:weightSum="7">
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="7"
-                            android:textColor="@color/secondary"
-                            android:textSize="56sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="8dp"
-                            android:layout_marginBottom="12dp"
-                            android:text="Ngày"
-                            android:textColor="@color/on_surface_variant"
-                            android:textSize="20sp"
-                            android:textStyle="bold" />
+                    <!-- Day Template (Mon) -->
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mon" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
                     </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="6dp"
-                        android:layout_marginTop="8dp"
-                        android:orientation="horizontal">
-                        <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@color/secondary" />
-                        <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@color/secondary" />
-                        <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@color/secondary" />
-                        <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@color/secondary" />
-                        <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@color/secondary" />
-                        <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@color/secondary" />
-                        <View android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@color/secondary" />
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tue" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Wed" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thu" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fri" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sat" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
+                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sun" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
                     </LinearLayout>
                 </LinearLayout>
-            </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="12dp"
+            android:text="Your Stats"
+            android:textColor="@color/on_surface"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <!-- Stats Grid (Horizontal) -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:layout_marginEnd="6dp"
+                app:cardBackgroundColor="@color/surface">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center" android:padding="16dp">
+                    <FrameLayout android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_icon_blue" android:backgroundTint="@color/success_container">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="◎" android:textColor="@color/success" android:textSize="16sp" android:textStyle="bold"/>
+                    </FrameLayout>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="90%" android:textColor="@color/on_surface" android:textSize="20sp" android:textStyle="bold" android:layout_marginTop="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Accuracy" android:textColor="@color/on_surface_secondary" android:textSize="10sp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:layout_marginHorizontal="6dp"
+                app:cardBackgroundColor="@color/surface">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center" android:padding="16dp">
+                    <FrameLayout android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_icon_blue">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="📚" android:textColor="@color/primary" android:textSize="14sp" />
+                    </FrameLayout>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="30" android:textColor="@color/on_surface" android:textSize="20sp" android:textStyle="bold" android:layout_marginTop="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Quizzes" android:textColor="@color/on_surface_secondary" android:textSize="10sp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="2dp"
+                android:layout_marginStart="6dp"
+                app:cardBackgroundColor="@color/surface">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:gravity="center" android:padding="16dp">
+                    <FrameLayout android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_icon_blue" android:backgroundTint="@color/tertiary_container">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="⏱" android:textColor="@color/tertiary" android:textSize="14sp" />
+                    </FrameLayout>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="4m 15s" android:textColor="@color/on_surface" android:textSize="20sp" android:textStyle="bold" android:layout_marginTop="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Avg Time" android:textColor="@color/on_surface_secondary" android:textSize="10sp"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
         </LinearLayout>
 
-        <!-- Recently Created Section -->
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp">
-
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="12dp">
             <TextView
-                android:id="@+id/recently_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Đã tạo gần đây"
+                android:text="Recently Added"
                 android:textColor="@color/on_surface"
-                android:textSize="24sp"
+                android:textSize="18sp"
                 android:textStyle="bold" />
-
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:text="Xem tất cả"
+                android:text="See All"
                 android:textColor="@color/primary"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </RelativeLayout>
 
+        <!-- Horizontal scrollView for Recently Added -->
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
+            android:scrollbars="none"
             android:clipToPadding="false"
-            android:scrollbars="none">
-
+            android:paddingEnd="24dp">
+            
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
-
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="260dp"
+                
+                <androidx.cardview.widget.CardView
+                    android:layout_width="160dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    app:cardBackgroundColor="@color/surface_container_lowest"
-                    app:cardCornerRadius="20dp"
-                    app:strokeWidth="0dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <View android:layout_width="match_parent" android:layout_height="100dp" android:background="@color/surface_container_high" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Advanced UI Systems" android:textColor="@color/on_surface" android:textSize="16sp" android:textStyle="bold" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="2 giờ trước" android:textColor="@color/on_surface_variant" android:textSize="12sp" />
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="4dp"
+                    app:cardBackgroundColor="@color/surface">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                        <FrameLayout android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_icon_blue">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="📚" android:textColor="@color/primary" android:textSize="14sp" />
+                        </FrameLayout>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="World History" android:textColor="@color/on_surface" android:textSize="14sp" android:textStyle="bold" android:layout_marginTop="16dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="15 questions" android:textColor="@color/on_surface_secondary" android:textSize="10sp"/>
+                        
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="12dp">
+                            <ProgressBar style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_weight="1" android:layout_height="4dp" android:progress="60" android:progressDrawable="@android:drawable/progress_horizontal" android:progressTint="@color/primary"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="60%" android:textSize="8sp" android:layout_marginStart="8dp" android:textColor="@color/on_surface_secondary"/>
                         </LinearLayout>
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </androidx.cardview.widget.CardView>
 
-                <com.google.android.material.card.MaterialCardView
-                    android:layout_width="260dp"
+                <!-- duplicate card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="160dp"
                     android:layout_height="wrap_content"
-                    app:cardBackgroundColor="@color/surface_container_lowest"
-                    app:cardCornerRadius="20dp"
-                    app:strokeWidth="0dp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
-                        <View android:layout_width="match_parent" android:layout_height="100dp" android:background="@color/surface_container_high" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="16dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Modern History 101" android:textColor="@color/on_surface" android:textSize="16sp" android:textStyle="bold" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Hôm qua" android:textColor="@color/on_surface_variant" android:textSize="12sp" />
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="4dp"
+                    app:cardBackgroundColor="@color/surface">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                        <FrameLayout android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_icon_blue" android:backgroundTint="@color/tertiary_container">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="🔬" android:textColor="@color/tertiary" android:textSize="14sp" />
+                        </FrameLayout>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Science Basics" android:textColor="@color/on_surface" android:textSize="14sp" android:textStyle="bold" android:layout_marginTop="16dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10 questions" android:textColor="@color/on_surface_secondary" android:textSize="10sp"/>
+                        
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="12dp">
+                            <ProgressBar style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_weight="1" android:layout_height="4dp" android:progress="80" android:progressDrawable="@android:drawable/progress_horizontal" android:progressTint="@color/tertiary"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="80%" android:textSize="8sp" android:layout_marginStart="8dp" android:textColor="@color/on_surface_secondary"/>
                         </LinearLayout>
                     </LinearLayout>
-                </com.google.android.material.card.MaterialCardView>
+                </androidx.cardview.widget.CardView>
+
+                <!-- 3rd card -->
+                <androidx.cardview.widget.CardView
+                    android:layout_width="160dp"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="16dp"
+                    app:cardElevation="2dp"
+                    android:layout_marginEnd="12dp"
+                    android:layout_marginBottom="4dp"
+                    app:cardBackgroundColor="@color/surface">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+                        <FrameLayout android:layout_width="32dp" android:layout_height="32dp" android:background="@drawable/bg_icon_blue" android:backgroundTint="@color/success_container">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center" android:text="∑" android:textColor="@color/success" android:textSize="14sp" />
+                        </FrameLayout>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Math Practice" android:textColor="@color/on_surface" android:textSize="14sp" android:textStyle="bold" android:layout_marginTop="16dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="20 questions" android:textColor="@color/on_surface_secondary" android:textSize="10sp"/>
+                        
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:layout_marginTop="12dp">
+                            <ProgressBar style="?android:attr/progressBarStyleHorizontal" android:layout_width="0dp" android:layout_weight="1" android:layout_height="4dp" android:progress="100" android:progressDrawable="@android:drawable/progress_horizontal" android:progressTint="@color/success"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="100%" android:textSize="8sp" android:layout_marginStart="8dp" android:textColor="@color/on_surface_secondary"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
             </LinearLayout>
         </HorizontalScrollView>
+
+        <Button
+            android:id="@+id/btn_create_quiz"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/bg_button_primary"
+            app:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            android:text="Create Quiz"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btn_library"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_chip_selector"
+            app:backgroundTint="@color/white"
+            android:stateListAnimator="@null"
+            android:text="Library"
+            android:textAllCaps="false"
+            android:textColor="@color/on_surface"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

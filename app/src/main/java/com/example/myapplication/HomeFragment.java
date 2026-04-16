@@ -1,17 +1,17 @@
 package com.example.myapplication;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import com.google.android.material.button.MaterialButton;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 public class HomeFragment extends Fragment {
     @Nullable
@@ -20,18 +20,27 @@ public class HomeFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
         TextView welcomeText = view.findViewById(R.id.home_welcome_text);
-        MaterialButton btnCreate = view.findViewById(R.id.btn_continue_learning);
+        Button btnCreate = view.findViewById(R.id.btn_create_quiz);
+        Button btnLibrary = view.findViewById(R.id.btn_library);
 
         // Load user info
         SharedPreferences sharedPref = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
-        String name = sharedPref.getString("UserName", "Bạn");
-        welcomeText.setText("Chào mừng trở lại, " + name + "!");
+        String name = sharedPref.getString("UserName", "John Doe");
+        welcomeText.setText("Hello, " + name + "! 👋");
 
-        // Open Create Quiz Activity
         btnCreate.setOnClickListener(v -> {
-            Intent intent = new Intent(getActivity(), CreateQuizActivity.class);
-            startActivity(intent);
+            if (getActivity() instanceof MainActivity) {
+                ((MainActivity) getActivity()).switchToTab(1); // Create tab
+            }
         });
+        
+        if (btnLibrary != null) {
+            btnLibrary.setOnClickListener(v -> {
+                if (getActivity() instanceof MainActivity) {
+                    ((MainActivity) getActivity()).switchToTab(2); // Library tab
+                }
+            });
+        }
 
         return view;
     }

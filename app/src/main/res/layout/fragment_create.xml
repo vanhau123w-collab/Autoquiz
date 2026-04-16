@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:clipToPadding="false"
+    android:paddingBottom="100dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Create Quiz 📝"
+            android:textColor="@color/on_surface"
+            android:textSize="28sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Paste your text and we'll generate questions"
+            android:textColor="@color/on_surface_secondary"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Your Text"
+            android:textStyle="bold"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="14sp" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/et_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_input_field"
+                android:gravity="top|start"
+                android:hint="Paste or type your text here... (minimum 50 words)"
+                android:inputType="textMultiLine"
+                android:padding="16dp"
+                android:textColor="@color/on_surface"
+                android:textColorHint="@color/outline_variant"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="12dp"
+                android:background="@drawable/bg_input_field"
+                android:backgroundTint="#F3F4F6"
+                android:gravity="center"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="T "
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="0 words"
+                    android:textColor="@color/on_surface_variant"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Number of Questions"
+            android:textStyle="bold"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_q5"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_chip_selector"
+                app:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:text="5"
+                android:textColor="@color/color_chip_text"
+                android:textSize="14sp"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_q10"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="6dp"
+                android:background="@drawable/bg_chip_selector"
+                app:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:text="10"
+                android:textColor="@color/color_chip_text"
+                android:textSize="14sp"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_q15"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="6dp"
+                android:background="@drawable/bg_chip_selector"
+                app:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:text="15"
+                android:textColor="@color/color_chip_text"
+                android:textSize="14sp"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_q20"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_chip_selector"
+                app:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:text="20"
+                android:textColor="@color/color_chip_text"
+                android:textSize="14sp"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="Difficulty Level"
+            android:textStyle="bold"
+            android:textColor="@color/on_surface_variant"
+            android:textSize="14sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btn_easy"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:background="@drawable/bg_chip_selector_green"
+                app:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:text="Easy"
+                android:textColor="@color/color_chip_text"
+                android:textSize="14sp"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_medium"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginHorizontal="6dp"
+                android:background="@drawable/bg_chip_selector_orange"
+                app:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:text="Medium"
+                android:textColor="@color/color_chip_text"
+                android:textSize="14sp"
+                android:textAllCaps="false" />
+
+            <Button
+                android:id="@+id/btn_hard"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:background="@drawable/bg_chip_selector_red"
+                app:backgroundTint="@null"
+                android:stateListAnimator="@null"
+                android:text="Hard"
+                android:textColor="@color/color_chip_text"
+                android:textSize="14sp"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btn_generate_quiz"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="32dp"
+            android:background="@drawable/bg_chip_selector"
+            android:backgroundTint="#CBD5E1"
+            app:backgroundTint="@null"
+            android:stateListAnimator="@null"
+            android:text="Generate Quiz"
+            android:textColor="@color/on_surface_variant"
+            android:textAllCaps="false"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

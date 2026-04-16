@@ -1,0 +1,16 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Chữ A đậm nét, đẹp -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M9.5,16 H4.5 L3.2,19 H0.8 L5.8,4 H8.2 L13.2,19 H10.8 L9.5,16 Z M5.2,14 H8.8 L7,9.5 L5.2,14 Z"/>
+        
+    <!-- Chữ Q đậm nét, vạch nhỏ rõ ràng -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M16.5,4 C12.5,4 10.5,6.8 10.5,10.4 C10.5,14 12.5,16.8 16.5,16.8 C17.8,16.8 18.9,16.3 19.8,15.6 L21.7,17.4 L23.2,16.0 L21.3,14.2 C22.1,13.2 22.5,12.0 22.5,10.4 C22.5,6.8 20.5,4 16.5,4 Z M16.5,14.8 C14,14.8 12.8,13 12.8,10.4 C12.8,7.8 14,6 16.5,6 C19,6 20.2,7.8 20.2,10.4 C20.2,13 19,14.8 16.5,14.8 Z"/>
+</vector>

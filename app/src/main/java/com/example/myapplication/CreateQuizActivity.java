@@ -48,7 +48,8 @@ public class CreateQuizActivity extends AppCompatActivity {
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinnerQuantity.setAdapter(adapter);
 
-        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
+        androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar.setNavigationOnClickListener(v -> finish());
 
         btnGenerateQuiz.setOnClickListener(v -> {
             String title = etQuizTitle.getText().toString().trim();

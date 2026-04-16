@@ -1,191 +1,148 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <com.google.android.material.appbar.AppBarLayout
+    <!-- Top Toolbar / Progress -->
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/background"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/toolbar"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            app:contentInsetStart="0dp">
+            android:layout_height="match_parent"
+            android:paddingEnd="16dp">
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <ImageView
+                android:id="@+id/close_quiz"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_centerVertical="true"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                app:tint="@color/on_surface"
+                android:clickable="true"
+                android:focusable="true"/>
 
-                <ImageView
-                    android:id="@+id/close_quiz"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_centerVertical="true"
-                    android:src="@android:drawable/ic_menu_close_clear_cancel"
-                    app:tint="@color/on_surface"
-                    android:clickable="true"
-                    android:focusable="true" />
+            <TextView
+                android:id="@+id/question_counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="Question 1 of 10"
+                android:textColor="@color/on_surface"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:text="AutoQuiz"
-                    android:textColor="@color/primary"
-                    android:textSize="20sp"
-                    android:textStyle="bold|italic" />
+            <TextView
+                android:id="@+id/streak_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:text="🔥 12"
+                android:textColor="@color/secondary"
+                android:textStyle="bold" />
+        </RelativeLayout>
+    </androidx.appcompat.widget.Toolbar>
 
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:background="@color/surface_container_high"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingStart="12dp"
-                    android:paddingTop="6dp"
-                    android:paddingEnd="12dp"
-                    android:paddingBottom="6dp">
-
-                    <ImageView
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:src="@android:drawable/btn_star_big_on"
-                        app:tint="@color/secondary" />
-
-                    <TextView
-                        android:id="@+id/streak_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="4dp"
-                        android:text="12"
-                        android:textColor="@color/on_surface"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-                </LinearLayout>
-            </RelativeLayout>
-        </androidx.appcompat.widget.Toolbar>
-    </com.google.android.material.appbar.AppBarLayout>
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/quiz_progress_bar"
+        android:layout_width="match_parent"
+        android:layout_height="8dp"
+        app:indicatorColor="@color/primary"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        app:trackColor="@color/outline"
+        app:trackThickness="8dp" />
 
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="120dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="0dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/bottomActionBar"
+        app:layout_constraintTop_toBottomOf="@id/quiz_progress_bar">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="24dp">
-
-            <!-- Progress Header -->
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/progress_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Tiến độ hiện tại"
-                    android:textColor="@color/on_surface_variant"
-                    android:textSize="10sp"
-                    android:textStyle="bold"
-                    android:textAllCaps="true"
-                    android:letterSpacing="0.1" />
-
-                <TextView
-                    android:id="@+id/question_counter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/progress_label"
-                    android:layout_marginTop="4dp"
-                    android:text="Câu hỏi 1 trên 10"
-                    android:textColor="@color/on_surface"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_progress_percent"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignBottom="@id/question_counter"
-                    android:text="10%"
-                    android:textColor="@color/primary"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-            </RelativeLayout>
-
-            <com.google.android.material.progressindicator.LinearProgressIndicator
-                android:id="@+id/quiz_progress_bar"
-                android:layout_width="match_parent"
-                android:layout_height="12dp"
-                android:layout_marginTop="16dp"
-                android:progress="10"
-                app:indicatorColor="@color/primary"
-                app:trackColor="@color/surface_container_highest"
-                app:trackCornerRadius="6dp"
-                app:trackThickness="12dp" />
+            android:padding="@dimen/spacing_large">
 
             <!-- Question Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="32dp"
-                app:cardBackgroundColor="@color/surface_container_low"
-                app:cardCornerRadius="20dp"
+                android:layout_marginTop="16dp"
+                app:cardCornerRadius="@dimen/radius_xlarge"
+                app:cardElevation="@dimen/card_elevation"
                 app:strokeWidth="0dp">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:padding="24dp">
+                    android:padding="32dp">
 
                     <TextView
                         android:id="@+id/tv_category"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:background="@color/primary_fixed"
-                        android:paddingStart="8dp"
-                        android:paddingTop="4dp"
-                        android:paddingEnd="8dp"
-                        android:paddingBottom="4dp"
-                        android:text="CHỦ ĐỀ"
-                        android:textColor="@color/on_primary_fixed"
+                        android:background="@drawable/bg_chip_success"
+                        android:paddingHorizontal="10dp"
+                        android:paddingVertical="4dp"
+                        android:text="SCIENCE"
+                        android:textColor="@color/success"
                         android:textSize="10sp"
-                        android:textStyle="bold"
-                        android:letterSpacing="0.1" />
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/tv_question_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Nội dung câu hỏi sẽ hiển thị ở đây..."
+                        android:text="Which of the following describes the behavior of light as both a particle and a wave?"
                         android:textColor="@color/on_surface"
-                        android:textSize="20sp"
+                        android:textSize="22sp"
                         android:textStyle="bold"
-                        android:lineSpacingExtra="4dp" />
+                        android:lineSpacingExtra="6dp" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
-            <!-- Options Grid -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Select one answer"
+                    android:textColor="@color/on_surface_secondary"
+                    android:textSize="11sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="true"
+                    android:letterSpacing="0.1" />
+
+                <TextView
+                    android:id="@+id/tv_progress_percent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:text="10%"
+                    android:textColor="@color/primary"
+                    android:textSize="12sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <!-- Options List -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:orientation="vertical">
 
                 <!-- Option A -->
@@ -194,8 +151,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    app:cardBackgroundColor="@color/surface_container_lowest"
-                    app:cardCornerRadius="16dp"
+                    app:cardCornerRadius="@dimen/radius_medium"
+                    app:cardElevation="1dp"
                     app:strokeWidth="0dp">
 
                     <LinearLayout
@@ -207,11 +164,10 @@
 
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/indicator_a"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            app:cardBackgroundColor="@color/surface_container_low"
-                            app:cardCornerRadius="20dp"
-                            app:strokeWidth="0dp">
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp">
                             <TextView
                                 android:id="@+id/tv_indicator_a"
                                 android:layout_width="wrap_content"
@@ -227,7 +183,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
-                            android:text="Đáp án A"
+                            android:text="Wave-particle duality"
                             android:textColor="@color/on_surface"
                             android:textSize="16sp" />
                     </LinearLayout>
@@ -239,8 +195,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    app:cardBackgroundColor="@color/surface_container_lowest"
-                    app:cardCornerRadius="16dp"
+                    app:cardCornerRadius="@dimen/radius_medium"
+                    app:cardElevation="1dp"
                     app:strokeWidth="0dp">
 
                     <LinearLayout
@@ -252,11 +208,10 @@
 
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/indicator_b"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            app:cardBackgroundColor="@color/surface_container_low"
-                            app:cardCornerRadius="20dp"
-                            app:strokeWidth="0dp">
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp">
                             <TextView
                                 android:id="@+id/tv_indicator_b"
                                 android:layout_width="wrap_content"
@@ -272,7 +227,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
-                            android:text="Đáp án B"
+                            android:text="Quantum mechanics"
                             android:textColor="@color/on_surface"
                             android:textSize="16sp" />
                     </LinearLayout>
@@ -284,8 +239,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    app:cardBackgroundColor="@color/surface_container_lowest"
-                    app:cardCornerRadius="16dp"
+                    app:cardCornerRadius="@dimen/radius_medium"
+                    app:cardElevation="1dp"
                     app:strokeWidth="0dp">
 
                     <LinearLayout
@@ -297,11 +252,10 @@
 
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/indicator_c"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            app:cardBackgroundColor="@color/surface_container_low"
-                            app:cardCornerRadius="20dp"
-                            app:strokeWidth="0dp">
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp">
                             <TextView
                                 android:id="@+id/tv_indicator_c"
                                 android:layout_width="wrap_content"
@@ -317,7 +271,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
-                            android:text="Đáp án C"
+                            android:text="Photoelectric effect"
                             android:textColor="@color/on_surface"
                             android:textSize="16sp" />
                     </LinearLayout>
@@ -329,8 +283,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    app:cardBackgroundColor="@color/surface_container_lowest"
-                    app:cardCornerRadius="16dp"
+                    app:cardCornerRadius="@dimen/radius_medium"
+                    app:cardElevation="1dp"
                     app:strokeWidth="0dp">
 
                     <LinearLayout
@@ -342,11 +296,10 @@
 
                         <com.google.android.material.card.MaterialCardView
                             android:id="@+id/indicator_d"
-                            android:layout_width="40dp"
-                            android:layout_height="40dp"
-                            app:cardBackgroundColor="@color/surface_container_low"
-                            app:cardCornerRadius="20dp"
-                            app:strokeWidth="0dp">
+                            android:layout_width="32dp"
+                            android:layout_height="32dp"
+                            app:cardCornerRadius="16dp"
+                            app:cardElevation="0dp">
                             <TextView
                                 android:id="@+id/tv_indicator_d"
                                 android:layout_width="wrap_content"
@@ -362,32 +315,33 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="16dp"
-                            android:text="Đáp án D"
+                            android:text="Heisenberg principle"
                             android:textColor="@color/on_surface"
                             android:textSize="16sp" />
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
             </LinearLayout>
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
     <!-- Bottom Action Bar -->
-    <com.google.android.material.card.MaterialCardView
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bottomActionBar"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:layout_gravity="bottom"
-        app:cardBackgroundColor="@color/surface_container_lowest"
-        app:cardCornerRadius="32dp"
-        app:cardElevation="16dp">
+        android:layout_height="80dp"
+        app:cardBackgroundColor="@color/surface"
+        app:cardCornerRadius="0dp"
+        app:cardElevation="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_vertical"
             android:orientation="horizontal"
-            android:paddingStart="24dp"
-            android:paddingEnd="24dp">
+            android:paddingHorizontal="24dp">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_back_quiz"
@@ -395,25 +349,28 @@
                 android:layout_width="wrap_content"
                 android:layout_height="56dp"
                 android:text="Quay lại"
-                android:textStyle="bold"
+                android:textAllCaps="false"
+                android:textColor="@color/on_surface_secondary"
                 app:cornerRadius="16dp"
-                app:strokeColor="@color/outline_variant" />
+                app:strokeColor="@color/outline" />
 
             <View
                 android:layout_width="0dp"
-                android:layout_height="0dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_next_quiz"
                 android:layout_width="wrap_content"
                 android:layout_height="56dp"
-                android:paddingStart="32dp"
-                android:paddingEnd="32dp"
+                android:backgroundTint="@color/primary"
+                android:paddingHorizontal="32dp"
                 android:text="Câu tiếp theo"
+                android:textAllCaps="false"
+                android:textColor="@color/white"
                 android:textStyle="bold"
                 app:cornerRadius="16dp" />
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
+    </androidx.cardview.widget.CardView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

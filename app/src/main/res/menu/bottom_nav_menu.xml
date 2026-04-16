@@ -3,13 +3,17 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@android:drawable/ic_menu_today"
-        android:title="Trang chủ" />
+        android:title="Home" />
+    <item
+        android:id="@+id/navigation_create"
+        android:icon="@android:drawable/ic_input_add"
+        android:title="Create" />
     <item
         android:id="@+id/navigation_library"
-        android:icon="@android:drawable/ic_menu_recent_history"
-        android:title="Thư viện" />
+        android:icon="@android:drawable/ic_menu_sort_by_size"
+        android:title="Library" />
     <item
         android:id="@+id/navigation_settings"
-        android:icon="@android:drawable/ic_menu_preferences"
-        android:title="Cài đặt" />
+        android:icon="@android:drawable/ic_menu_myplaces"
+        android:title="Profile" />
 </menu>

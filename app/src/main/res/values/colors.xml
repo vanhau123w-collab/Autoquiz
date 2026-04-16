@@ -1,33 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Primary Colors -->
-    <color name="primary">#0040A1</color>
-    <color name="primary_container">#0056D2</color>
+    <!-- Primary Brand -->
+    <color name="primary">#155DFC</color>
+    <color name="primary_variant">#0047E1</color>
     <color name="on_primary">#FFFFFF</color>
-    <color name="primary_fixed">#DAE2FF</color>
-    <color name="on_primary_fixed">#001847</color>
+    <color name="primary_container">#DBEAFE</color>
+    <color name="on_primary_container">#155DFC</color>
+    <color name="primary_light">#E8EEFF</color>
 
-    <!-- Surface & Background -->
-    <color name="background">#F9F9FC</color>
-    <color name="surface">#F9F9FC</color>
-    <color name="surface_container">#EEEEF0</color>
-    <color name="surface_container_low">#F3F3F6</color>
-    <color name="surface_container_lowest">#FFFFFF</color>
-    <color name="surface_container_high">#E8E8EA</color>
-    <color name="surface_container_highest">#E2E2E5</color>
-    <color name="on_surface">#1A1C1E</color>
-    <color name="on_surface_variant">#424654</color>
-    <color name="outline">#737785</color>
-    <color name="outline_variant">#C3C6D6</color>
+    <!-- Secondary / Accent (Orange) -->
+    <color name="secondary">#FF6900</color>
+    <color name="on_secondary">#FFFFFF</color>
+    <color name="secondary_container">#FFEDD5</color>
+    <color name="on_secondary_container">#FF6900</color>
+
+    <!-- Tertiary (Purple) -->
+    <color name="tertiary">#9810FA</color>
+    <color name="on_tertiary">#FFFFFF</color>
+    <color name="tertiary_container">#F3E8FF</color>
+    <color name="on_tertiary_container">#9810FA</color>
+    <color name="figma_purple">#9810FA</color>
+
+    <!-- Background & Surfaces -->
+    <color name="background">#EEF2FF</color>
+    <color name="background_gradient_top">#FCE4EC</color>
+    <color name="background_gradient_bottom">#FFF8E1</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_variant">#F3F4F6</color>
+    <color name="on_surface">#1A1A2E</color>
+    <color name="on_surface_variant">#6B7280</color>
+    <color name="on_surface_secondary">#6B7280</color>
 
     <!-- Semantic Colors -->
-    <color name="secondary">#8E4E00</color>
-    <color name="secondary_container">#FD9000</color>
-    <color name="on_secondary_container">#613400</color>
-    <color name="tertiary">#00531E</color>
-    <color name="error">#BA1A1A</color>
-    <color name="error_container">#FFDAD6</color>
+    <color name="success">#22C55E</color>
+    <color name="on_success">#FFFFFF</color>
+    <color name="success_container">#DCFCE7</color>
+    <color name="error">#EF4444</color>
+    <color name="on_error">#FFFFFF</color>
+    <color name="error_container">#FEE2E2</color>
+    <color name="warning">#F59E0B</color>
+    <color name="on_warning">#FFFFFF</color>
+    <color name="warning_container">#FEF3C7</color>
 
+    <!-- Borders & Outlines -->
+    <color name="outline">#E5E7EB</color>
+    <color name="outline_variant">#D1D5DC</color>
+    <color name="card_border">#E8ECF4</color>
+
+    <!-- UI Palette -->
+    <color name="surface_blue">#DBEAFE</color>
+    <color name="surface_purple">#F3E8FF</color>
+    <color name="surface_green">#DCFCE7</color>
+
+    <!-- Bottom Nav -->
+    <color name="nav_inactive">#9CA3AF</color>
+    <color name="nav_active">#155DFC</color>
+
+    <!-- Static Colors -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="transparent">#00000000</color>
+
+    <!-- Compatibility Aliases -->
+    <color name="primary_fixed">@color/primary_container</color>
+    <color name="on_primary_fixed">@color/on_primary_container</color>
+    <color name="surface_container">@color/surface_variant</color>
+    <color name="surface_container_low">@color/surface_variant</color>
+    <color name="surface_container_lowest">@color/surface</color>
+    <color name="surface_container_high">@color/surface_variant</color>
+    <color name="surface_container_highest">@color/outline</color>
 </resources>

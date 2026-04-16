@@ -17,7 +17,8 @@ import org.json.JSONObject;
 
 public class LibraryFragment extends Fragment {
 
-    private TextView tvTotalQuizzes, tvEmptyState;
+    private TextView tvTotalQuizzes;
+    private View emptyState;
     private LinearLayout quizListContainer;
 
     @Nullable
@@ -25,9 +26,9 @@ public class LibraryFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_library, container, false);
 
-        tvTotalQuizzes = view.findViewById(R.id.tv_total_quizzes);
-        tvEmptyState = view.findViewById(R.id.tv_empty_state);
-        quizListContainer = view.findViewById(R.id.quiz_list_container);
+        tvTotalQuizzes = view.findViewById(R.id.tv_quiz_count);
+        emptyState = view.findViewById(R.id.empty_state);
+        quizListContainer = view.findViewById(R.id.library_container);
 
         loadQuizzes();
 
@@ -35,9 +36,13 @@ public class LibraryFragment extends Fragment {
     }
 
     private void loadQuizzes() {
-        if (getContext() == null) return;
+        if (getContext() == null || quizListContainer == null) return;
         
         quizListContainer.removeAllViews();
+        // Keep emptyState logic in mind if it's placed inside library_container or outside
+        // Wait, in my fragment_library.xml, empty_state is inside library_container.
+        // So I must re-add empty_state if count == 0.
+        
         SharedPreferences sharedPref = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
         String quizzesJson = sharedPref.getString("QuizList", "[]");
 
@@ -46,13 +51,16 @@ public class LibraryFragment extends Fragment {
             int count = quizArray.length();
 
             if (count == 0) {
-                tvEmptyState.setVisibility(View.VISIBLE);
-                tvTotalQuizzes.setText("0 TỔNG SỐ");
+                if (emptyState.getParent() != null) {
+                    ((ViewGroup) emptyState.getParent()).removeView(emptyState);
+                }
+                quizListContainer.addView(emptyState);
+                emptyState.setVisibility(View.VISIBLE);
+                tvTotalQuizzes.setText("0 saved quizzes");
             } else {
-                tvEmptyState.setVisibility(View.GONE);
-                tvTotalQuizzes.setText(count + " TỔNG SỐ");
+                tvTotalQuizzes.setText(count + " saved quizzes");
 
-                for (int i = 0; i < count; i++) {
+                for (int i = quizArray.length() - 1; i >= 0; i--) {
                     JSONObject quizObj = quizArray.getJSONObject(i);
                     addQuizCard(quizObj.getString("title"), quizObj.getString("date"), quizObj.getString("count"));
                 }
@@ -65,13 +73,13 @@ public class LibraryFragment extends Fragment {
     private void addQuizCard(String title, String date, String qCount) {
         View cardView = LayoutInflater.from(getContext()).inflate(R.layout.item_quiz, quizListContainer, false);
         
-        TextView tvTitle = cardView.findViewById(R.id.item_title);
-        TextView tvDate = cardView.findViewById(R.id.item_date);
-        TextView tvCount = cardView.findViewById(R.id.item_count);
+        TextView tvTitle = cardView.findViewById(R.id.tv_title);
+        TextView tvDate = cardView.findViewById(R.id.tv_date);
+        TextView tvCount = cardView.findViewById(R.id.tv_question_count);
 
         tvTitle.setText(title);
-        tvDate.setText("Đã tạo " + date);
-        tvCount.setText(qCount);
+        tvDate.setText(date);
+        tvCount.setText(qCount + " questions");
 
         cardView.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), QuizActivity.class);
