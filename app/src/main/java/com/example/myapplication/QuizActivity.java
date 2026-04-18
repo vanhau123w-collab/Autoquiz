@@ -37,7 +37,16 @@ public class QuizActivity extends AppCompatActivity {
         setContentView(R.layout.activity_quiz);
 
         initViews();
-        loadMockQuestions();
+        
+        String quizData = getIntent().getStringExtra("QUIZ_DATA");
+        String quizTitle = getIntent().getStringExtra("QUIZ_TITLE");
+        
+        if (quizData != null && !quizData.isEmpty()) {
+            loadAiQuestions(quizData, quizTitle);
+        } else {
+            loadMockQuestions();
+        }
+        
         updateUI();
 
         setupListeners();
@@ -122,6 +131,12 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
+        if (questionList.isEmpty()) {
+            Toast.makeText(this, "Bộ câu hỏi này không có dữ liệu!", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
         Question q = questionList.get(currentQuestionIndex);
         tvQuestionText.setText(q.question);
         tvCategory.setText(q.category);
@@ -131,10 +146,11 @@ public class QuizActivity extends AppCompatActivity {
         optionTexts[2].setText(q.options[2]);
         optionTexts[3].setText(q.options[3]);
 
-        int progress = (int) (((float) (currentQuestionIndex + 1) / questionList.size()) * 100);
+        int size = questionList.size();
+        int progress = (int) (((float) (currentQuestionIndex + 1) / size) * 100);
         progressBar.setProgress(progress);
         tvProgressPercent.setText(progress + "%");
-        tvQuestionCounter.setText("Câu hỏi " + (currentQuestionIndex + 1) + " trên " + questionList.size());
+        tvQuestionCounter.setText("Câu hỏi " + (currentQuestionIndex + 1) + " trên " + size);
 
         // Reset options visual state
         for (int i = 0; i < 4; i++) {
@@ -145,7 +161,7 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         btnBack.setVisibility(currentQuestionIndex == 0 ? View.INVISIBLE : View.VISIBLE);
-        btnNext.setText(currentQuestionIndex == questionList.size() - 1 ? "Hoàn thành" : "Câu tiếp theo");
+        btnNext.setText(currentQuestionIndex == size - 1 ? "Hoàn thành" : "Câu tiếp theo");
     }
 
     private void loadMockQuestions() {
@@ -157,6 +173,27 @@ public class QuizActivity extends AppCompatActivity {
 
         questionList.add(new Question("Lịch sử", "Thành phố nào là thủ đô của Việt Nam?", 
                 new String[]{"Đà Nẵng", "Hồ Chí Minh", "Hà Nội", "Huế"}));
+    }
+
+    private void loadAiQuestions(String jsonData, String title) {
+        try {
+            org.json.JSONArray array = new org.json.JSONArray(jsonData);
+            for (int i = 0; i < array.length(); i++) {
+                org.json.JSONObject obj = array.getJSONObject(i);
+                String question = obj.getString("question");
+                org.json.JSONArray optionsArray = obj.getJSONArray("options");
+                String[] options = new String[4];
+                for (int j = 0; j < 4; j++) {
+                    options[j] = optionsArray.getString(j);
+                }
+                // Note: The AI returns 'answer' as 0-3, but our current Question class 
+                // doesn't store the correct answer yet. We'll add it for logic later.
+                questionList.add(new Question(title != null ? title : "AI Quiz", question, options));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            loadMockQuestions();
+        }
     }
 
     private static class Question {

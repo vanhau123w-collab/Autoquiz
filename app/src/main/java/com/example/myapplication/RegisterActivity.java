@@ -18,14 +18,16 @@ public class RegisterActivity extends AppCompatActivity {
 
         EditText nameEditText = findViewById(R.id.nameEditText);
         EditText emailEditText = findViewById(R.id.emailEditText);
+        EditText passwordEditText = findViewById(R.id.passwordEditText);
         Button registerButton = findViewById(R.id.registerButton);
         TextView loginTextView = findViewById(R.id.loginTextView);
 
         registerButton.setOnClickListener(v -> {
             String name = nameEditText.getText().toString().trim();
             String email = emailEditText.getText().toString().trim();
+            String password = passwordEditText.getText().toString().trim();
             
-            if (name.isEmpty() || email.isEmpty()) {
+            if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
                 Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -35,6 +37,7 @@ public class RegisterActivity extends AppCompatActivity {
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString("UserName", name);
             editor.putString("UserEmail", email);
+            editor.putString("UserPassword", password);
             editor.apply();
 
             Toast.makeText(this, "Đăng ký thành công!", Toast.LENGTH_SHORT).show();

@@ -111,10 +111,11 @@
         </LinearLayout>
 
         <ImageButton
+            android:id="@+id/btn_delete"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_more"
+            android:src="@android:drawable/ic_menu_delete"
             app:tint="@color/on_surface_secondary" />
     </LinearLayout>
 </androidx.cardview.widget.CardView>

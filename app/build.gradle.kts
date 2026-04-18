@@ -6,6 +6,10 @@ android {
     namespace = "com.example.myapplication"
     compileSdk = 36
 
+    buildFeatures {
+        buildConfig = true
+    }
+
     defaultConfig {
         applicationId = "com.example.myapplication"
         minSdk = 24
@@ -14,6 +18,16 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        
+        // Đọc API Key từ local.properties
+        val localProperties = java.util.Properties()
+        val localPropertiesFile = rootProject.file("local.properties")
+        if (localPropertiesFile.exists()) {
+            localProperties.load(localPropertiesFile.inputStream())
+        }
+        val apiKey = localProperties.getProperty("GEMINI_API_KEY") ?: "\"\""
+        
+        buildConfigField("String", "GEMINI_API_KEY", apiKey)
     }
 
     buildTypes {
@@ -39,6 +53,9 @@ dependencies {
     
     // Thư viện kết nối mạng siêu nhẹ và ổn định
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    
+    // Thư viện đọc file .docx siêu nhẹ
+    implementation("org.zwobble.mammoth:mammoth:1.5.0")
     
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")

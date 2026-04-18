@@ -62,7 +62,7 @@ public class LibraryFragment extends Fragment {
 
                 for (int i = quizArray.length() - 1; i >= 0; i--) {
                     JSONObject quizObj = quizArray.getJSONObject(i);
-                    addQuizCard(quizObj.getString("title"), quizObj.getString("date"), quizObj.getString("count"));
+                    addQuizCard(quizObj.getString("title"), quizObj.getString("date"), quizObj.getString("count"), quizObj.getString("raw_data"), i);
                 }
             }
         } catch (Exception e) {
@@ -70,12 +70,13 @@ public class LibraryFragment extends Fragment {
         }
     }
 
-    private void addQuizCard(String title, String date, String qCount) {
+    private void addQuizCard(String title, String date, String qCount, String rawData, int index) {
         View cardView = LayoutInflater.from(getContext()).inflate(R.layout.item_quiz, quizListContainer, false);
         
         TextView tvTitle = cardView.findViewById(R.id.tv_title);
         TextView tvDate = cardView.findViewById(R.id.tv_date);
         TextView tvCount = cardView.findViewById(R.id.tv_question_count);
+        View btnDelete = cardView.findViewById(R.id.btn_delete);
 
         tvTitle.setText(title);
         tvDate.setText(date);
@@ -83,10 +84,40 @@ public class LibraryFragment extends Fragment {
 
         cardView.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), QuizActivity.class);
+            intent.putExtra("QUIZ_DATA", rawData);
+            intent.putExtra("QUIZ_TITLE", title);
             startActivity(intent);
+        });
+        
+        btnDelete.setOnClickListener(v -> {
+            new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                .setTitle("Delete Quiz")
+                .setMessage("Are you sure you want to delete this quiz?")
+                .setPositiveButton("Delete", (dialog, which) -> deleteQuiz(index))
+                .setNegativeButton("Cancel", null)
+                .show();
         });
 
         quizListContainer.addView(cardView);
+    }
+
+    private void deleteQuiz(int index) {
+        try {
+            SharedPreferences sharedPref = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+            String quizzesJson = sharedPref.getString("QuizList", "[]");
+            JSONArray quizArray = new JSONArray(quizzesJson);
+            
+            if (index >= 0 && index < quizArray.length()) {
+                // In some versions of Android, JSONArray.remove(int) is available.
+                // If using older API, we might need a workaround, but minSdk is 24, 
+                // and remove(int) was added in API 19.
+                quizArray.remove(index);
+                sharedPref.edit().putString("QuizList", quizArray.toString()).apply();
+                loadQuizzes(); // Refresh list
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

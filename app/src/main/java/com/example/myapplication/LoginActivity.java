@@ -9,6 +9,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
+import android.content.SharedPreferences;
+import android.widget.Toast;
+
 public class LoginActivity extends AppCompatActivity {
 
     private boolean isPasswordVisible = false;
@@ -20,13 +24,31 @@ public class LoginActivity extends AppCompatActivity {
 
         Button loginButton = findViewById(R.id.btn_login);
         TextView registerTextView = findViewById(R.id.tv_register);
+        EditText emailEditText = findViewById(R.id.et_email);
         EditText passwordEditText = findViewById(R.id.et_password);
 
         loginButton.setOnClickListener(v -> {
-            // Simple navigation to MainActivity
-            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+            String emailInput = emailEditText.getText().toString().trim();
+            String passwordInput = passwordEditText.getText().toString().trim();
+
+            if (emailInput.isEmpty() || passwordInput.isEmpty()) {
+                Toast.makeText(this, "Vui lòng nhập đầy đủ thông tin", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            SharedPreferences sharedPref = getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+            String savedEmail = sharedPref.getString("UserEmail", null);
+            String savedPassword = sharedPref.getString("UserPassword", null);
+
+            if (emailInput.equals(savedEmail) && passwordInput.equals(savedPassword)) {
+                // Success
+                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                // Failure
+                Toast.makeText(this, "Email hoặc mật khẩu không chính xác", Toast.LENGTH_SHORT).show();
+            }
         });
 
         registerTextView.setOnClickListener(v -> {

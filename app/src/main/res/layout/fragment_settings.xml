@@ -71,6 +71,7 @@
                         android:orientation="vertical">
 
                         <TextView
+                            android:id="@+id/tv_profile_name"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Guest User"
@@ -79,6 +80,7 @@
                             android:textStyle="bold" />
 
                         <TextView
+                            android:id="@+id/tv_profile_email"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
@@ -153,7 +155,7 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Get quiz reminders" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
                     </LinearLayout>
 
-                    <Switch android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:thumbTint="@color/white" android:trackTint="@color/primary" />
+                    <Switch android:id="@+id/switch_notifications" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:thumbTint="@color/white" android:trackTint="@color/primary" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/card_border" />
@@ -184,7 +186,7 @@
                         <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Keep your streak alive" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
                     </LinearLayout>
 
-                    <Switch android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:thumbTint="@color/white" android:trackTint="@color/primary" />
+                    <Switch android:id="@+id/switch_reminder" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:thumbTint="@color/white" android:trackTint="@color/primary" />
                 </LinearLayout>
 
                 <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/card_border" />
@@ -216,8 +218,8 @@
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
-                        <Button android:layout_width="40dp" android:layout_height="36dp" android:text="EN" android:textColor="@color/white" android:textSize="12sp" android:background="@drawable/bg_chip_selector" app:backgroundTint="@color/primary" android:stateListAnimator="@null" android:layout_marginEnd="6dp" android:padding="0dp" />
-                        <Button android:layout_width="40dp" android:layout_height="36dp" android:text="VN" android:textColor="@color/on_surface" android:textSize="12sp" android:background="@drawable/bg_chip_selector" app:backgroundTint="@color/surface" android:stateListAnimator="@null" android:padding="0dp" />
+                        <Button android:id="@+id/btn_lang_en" android:layout_width="40dp" android:layout_height="36dp" android:text="EN" android:textColor="@color/white" android:textSize="12sp" android:background="@drawable/bg_chip_selector" app:backgroundTint="@color/primary" android:stateListAnimator="@null" android:layout_marginEnd="6dp" android:padding="0dp" />
+                        <Button android:id="@+id/btn_lang_vn" android:layout_width="40dp" android:layout_height="36dp" android:text="VN" android:textColor="@color/on_surface" android:textSize="12sp" android:background="@drawable/bg_chip_selector" app:backgroundTint="@color/surface" android:stateListAnimator="@null" android:padding="0dp" />
                     </LinearLayout>
                 </LinearLayout>
 
@@ -389,6 +391,7 @@
 
         <!-- Logout Button -->
         <LinearLayout
+            android:id="@+id/btn_logout"
             android:layout_width="match_parent"
             android:layout_height="56dp"
             android:layout_marginTop="24dp"
