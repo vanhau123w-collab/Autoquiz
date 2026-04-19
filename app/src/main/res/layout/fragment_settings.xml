@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Profile 👤"
+            android:text="@string/settings_title"
             android:textColor="@color/on_surface"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
-            android:text="Manage your account"
+            android:text="@string/settings_subtitle"
             android:textColor="@color/on_surface_secondary"
             android:textSize="14sp" />
 
@@ -91,6 +91,7 @@
                 </LinearLayout>
 
                 <Button
+                    android:id="@+id/btn_edit_profile"
                     android:layout_width="match_parent"
                     android:layout_height="48dp"
                     android:layout_marginTop="20dp"
@@ -98,7 +99,7 @@
                     android:backgroundTint="#EEF2FF"
                     app:backgroundTint="@null"
                     android:stateListAnimator="@null"
-                    android:text="Edit Profile"
+                    android:text="@string/edit_profile"
                     android:textAllCaps="false"
                     android:textColor="@color/primary"
                     android:textSize="14sp"
@@ -110,7 +111,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Settings"
+            android:text="@string/settings_title"
             android:textColor="@color/on_surface"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -151,8 +152,8 @@
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
                         android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Notifications" android:textColor="@color/on_surface" android:textSize="14sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Get quiz reminders" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/notifications" android:textColor="@color/on_surface" android:textSize="14sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/get_reminders" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
                     </LinearLayout>
 
                     <Switch android:id="@+id/switch_notifications" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:thumbTint="@color/white" android:trackTint="@color/primary" />
@@ -182,8 +183,8 @@
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
                         android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Daily Reminder" android:textColor="@color/on_surface" android:textSize="14sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Keep your streak alive" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/daily_reminder" android:textColor="@color/on_surface" android:textSize="14sp" android:textStyle="bold" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/keep_streak_alive" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
                     </LinearLayout>
 
                     <Switch android:id="@+id/switch_reminder" android:layout_width="wrap_content" android:layout_height="wrap_content" android:checked="true" android:thumbTint="@color/white" android:trackTint="@color/primary" />
@@ -213,8 +214,8 @@
                         android:layout_weight="1"
                         android:layout_marginStart="16dp"
                         android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Language" android:textColor="@color/on_surface" android:textSize="14sp" android:textStyle="bold" />
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="English" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/language" android:textColor="@color/on_surface" android:textSize="14sp" android:textStyle="bold" />
+                        <TextView android:id="@+id/tv_current_lang" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="English" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
                     </LinearLayout>
 
                     <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal">
@@ -230,7 +231,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Your Streak"
+            android:text="@string/current_streak"
             android:textColor="@color/on_surface"
             android:textSize="14sp"
             android:textStyle="bold" />
@@ -252,12 +253,12 @@
                 
                 <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
                     <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="vertical">
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Current Streak" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/current_streak" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
                         <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:gravity="bottom" android:orientation="horizontal">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="7" android:textColor="@color/secondary" android:textSize="40sp" android:textStyle="bold" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4dp" android:layout_marginBottom="8dp" android:text="days" android:textColor="@color/on_surface_secondary" android:textSize="16sp" />
+                            <TextView android:id="@+id/tv_streak_count_settings" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0" android:textColor="@color/secondary" android:textSize="40sp" android:textStyle="bold" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="4dp" android:layout_marginBottom="8dp" android:text="@string/days" android:textColor="@color/on_surface_secondary" android:textSize="16sp" />
                         </LinearLayout>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="Keep it up! Don't break the chain 🔥" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:text="@string/streak_motto" android:textColor="@color/on_surface_secondary" android:textSize="12sp" />
                     </LinearLayout>
                     <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentEnd="true" android:text="🔥" android:textSize="32sp" />
                 </RelativeLayout>
@@ -269,32 +270,32 @@
                     android:orientation="horizontal"
                     android:weightSum="7">
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Mon" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tv_settings_day_1" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="M" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Tue" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tv_settings_day_2" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="T" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Wed" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tv_settings_day_3" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="W" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Thu" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tv_settings_day_4" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="T" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fri" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tv_settings_day_5" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="F" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sat" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tv_settings_day_6" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="S" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
                     </LinearLayout>
                     <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical" android:gravity="center">
-                        <TextView android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
-                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Sun" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
+                        <TextView android:id="@+id/tv_settings_day_7" android:layout_width="24dp" android:layout_height="24dp" android:background="@drawable/bg_streak_circle" android:gravity="center" android:text="✓" android:textColor="@color/white" android:textSize="12sp" android:textStyle="bold"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="S" android:textSize="10sp" android:textColor="@color/on_surface_secondary" android:layout_marginTop="4dp"/>
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -327,7 +328,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="About AutoQuiz"
+                        android:text="@string/about_autoquiz"
                         android:textColor="@color/on_surface"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -351,7 +352,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Help &amp; Support"
+                        android:text="@string/help_support"
                         android:textColor="@color/on_surface"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -375,7 +376,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Privacy Policy"
+                        android:text="@string/privacy_policy"
                         android:textColor="@color/on_surface"
                         android:textSize="16sp"
                         android:textStyle="bold" />
@@ -409,7 +410,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
-                android:text="Logout"
+                android:text="@string/logout"
                 android:textColor="#FF3B30"
                 android:textSize="16sp"
                 android:textStyle="bold" />

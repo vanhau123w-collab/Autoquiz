@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
 }
@@ -20,14 +22,18 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         
         // Đọc API Key từ local.properties
-        val localProperties = java.util.Properties()
+        val localProperties = Properties()
         val localPropertiesFile = rootProject.file("local.properties")
         if (localPropertiesFile.exists()) {
             localProperties.load(localPropertiesFile.inputStream())
         }
         val apiKey = localProperties.getProperty("GEMINI_API_KEY") ?: "\"\""
+        val senderEmail = localProperties.getProperty("SENDER_EMAIL") ?: "\"\""
+        val senderPassword = localProperties.getProperty("SENDER_PASSWORD") ?: "\"\""
         
         buildConfigField("String", "GEMINI_API_KEY", apiKey)
+        buildConfigField("String", "SENDER_EMAIL", senderEmail)
+        buildConfigField("String", "SENDER_PASSWORD", senderPassword)
     }
 
     buildTypes {
@@ -43,21 +49,36 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+
+    packaging {
+        resources {
+            excludes += "META-INF/NOTICE.md"
+            excludes += "META-INF/LICENSE.md"
+        }
+    }
 }
 
 dependencies {
-    implementation("androidx.appcompat:appcompat:1.7.1")
-    implementation("com.google.android.material:material:1.13.0")
-    implementation("androidx.activity:activity:1.13.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.2.1")
+    implementation(libs.appcompat)
+    implementation(libs.material)
+    implementation(libs.activity)
+    implementation(libs.constraintlayout)
     
     // Thư viện kết nối mạng siêu nhẹ và ổn định
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
     
     // Thư viện đọc file .docx siêu nhẹ
     implementation("org.zwobble.mammoth:mammoth:1.5.0")
+
+    // Thư viện gửi Email JavaMail
+    implementation(libs.android.mail)
+    implementation(libs.android.activation)
+
+    // Thư viện Room SQLite
+    implementation(libs.room.runtime)
+    annotationProcessor(libs.room.compiler)
     
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.2.1")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.ext.junit)
+    androidTestImplementation(libs.espresso.core)
 }

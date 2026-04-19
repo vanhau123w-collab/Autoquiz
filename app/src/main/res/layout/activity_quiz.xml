@@ -33,7 +33,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Question 1 of 10"
+                android:text="@string/question_counter_placeholder"
                 android:textColor="@color/on_surface"
                 android:textSize="16sp"
                 android:textStyle="bold" />
@@ -44,7 +44,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:text="🔥 12"
+                android:text="@string/streak_placeholder"
                 android:textColor="@color/secondary"
                 android:textStyle="bold" />
         </RelativeLayout>
@@ -94,7 +94,7 @@
                         android:background="@drawable/bg_chip_success"
                         android:paddingHorizontal="10dp"
                         android:paddingVertical="4dp"
-                        android:text="SCIENCE"
+                        android:text="@string/category_placeholder"
                         android:textColor="@color/success"
                         android:textSize="10sp"
                         android:textStyle="bold" />
@@ -104,7 +104,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Which of the following describes the behavior of light as both a particle and a wave?"
+                        android:text="@string/question_text_placeholder"
                         android:textColor="@color/on_surface"
                         android:textSize="22sp"
                         android:textStyle="bold"
@@ -120,7 +120,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Select one answer"
+                    android:text="@string/select_one_answer"
                     android:textColor="@color/on_surface_secondary"
                     android:textSize="11sp"
                     android:textStyle="bold"
@@ -132,7 +132,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
-                    android:text="10%"
+                    android:text="@string/percent_placeholder"
                     android:textColor="@color/primary"
                     android:textSize="12sp"
                     android:textStyle="bold" />

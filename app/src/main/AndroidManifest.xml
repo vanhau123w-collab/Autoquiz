@@ -15,7 +15,7 @@
         android:theme="@style/Theme.MyApplication">
 
         <activity
-            android:name=".SplashActivity"
+            android:name=".main.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -23,11 +23,15 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".LoginActivity" android:exported="false" />
-
-        <activity android:name=".RegisterActivity" android:exported="false" />
-        <activity android:name=".MainActivity" android:exported="false" />
-        <activity android:name=".QuizActivity" android:exported="false" />
+        <activity android:name=".auth.LoginActivity" android:exported="false" />
+        <activity android:name=".auth.RegisterActivity" android:exported="false" />
+        <activity android:name=".auth.ForgotPasswordActivity" android:exported="false" />
+        <activity android:name=".auth.OtpVerificationActivity" android:exported="false" />
+        <activity android:name=".main.MainActivity" android:exported="false" />
+        <activity android:name=".quiz.QuizActivity" android:exported="false" />
+        <activity android:name=".quiz.QuizResultActivity" android:exported="false" />
+        <activity android:name=".quiz.ReviewActivity" android:exported="false" />
+        <activity android:name=".main.EditProfileActivity" />
 
     </application>
 

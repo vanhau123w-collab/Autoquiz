@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Create Quiz 📝"
+            android:text="@string/create_quiz_title"
             android:textColor="@color/on_surface"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Quiz Title"
+            android:text="@string/quiz_title_label"
             android:textStyle="bold"
             android:textColor="@color/on_surface_variant"
             android:textSize="14sp" />
@@ -37,7 +37,7 @@
             android:layout_height="56dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/bg_input_field"
-            android:hint="e.g. History Final Exam"
+            android:hint="@string/quiz_title_hint"
             android:inputType="text"
             android:paddingHorizontal="16dp"
             android:textColor="@color/on_surface"
@@ -55,7 +55,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Your Text"
+                android:text="@string/your_text_label"
                 android:textStyle="bold"
                 android:textColor="@color/on_surface_variant"
                 android:textSize="14sp" />
@@ -80,7 +80,7 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_input_field"
                 android:gravity="top|start"
-                android:hint="Paste or type your text here... (minimum 50 words)"
+                android:hint="@string/content_hint"
                 android:inputType="textMultiLine"
                 android:padding="16dp"
                 android:textColor="@color/on_surface"
@@ -107,6 +107,7 @@
                     android:textStyle="bold" />
 
                 <TextView
+                    android:id="@+id/tv_word_count"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="0 words"
@@ -119,7 +120,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Number of Questions"
+            android:text="@string/num_questions_label"
             android:textStyle="bold"
             android:textColor="@color/on_surface_variant"
             android:textSize="14sp" />
@@ -191,7 +192,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:text="Difficulty Level"
+            android:text="@string/difficulty_label"
             android:textStyle="bold"
             android:textColor="@color/on_surface_variant"
             android:textSize="14sp" />
@@ -211,7 +212,7 @@
                 android:background="@drawable/bg_chip_selector_green"
                 app:backgroundTint="@null"
                 android:stateListAnimator="@null"
-                android:text="Easy"
+                android:text="@string/difficulty_easy"
                 android:textColor="@color/color_chip_text"
                 android:textSize="14sp"
                 android:textAllCaps="false" />
@@ -225,7 +226,7 @@
                 android:background="@drawable/bg_chip_selector_orange"
                 app:backgroundTint="@null"
                 android:stateListAnimator="@null"
-                android:text="Medium"
+                android:text="@string/difficulty_medium"
                 android:textColor="@color/color_chip_text"
                 android:textSize="14sp"
                 android:textAllCaps="false" />
@@ -239,7 +240,7 @@
                 android:background="@drawable/bg_chip_selector_red"
                 app:backgroundTint="@null"
                 android:stateListAnimator="@null"
-                android:text="Hard"
+                android:text="@string/difficulty_hard"
                 android:textColor="@color/color_chip_text"
                 android:textSize="14sp"
                 android:textAllCaps="false" />
@@ -254,7 +255,7 @@
             android:backgroundTint="#CBD5E1"
             app:backgroundTint="@null"
             android:stateListAnimator="@null"
-            android:text="Generate Quiz"
+            android:text="@string/btn_generate_quiz"
             android:textColor="@color/on_surface_variant"
             android:textAllCaps="false"
             android:textSize="16sp"

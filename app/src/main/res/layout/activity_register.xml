@@ -32,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="48dp"
-                android:text="Create Account"
+                android:text="@string/register_title"
                 android:textColor="@color/on_surface"
                 android:textSize="@dimen/text_h1"
                 android:textStyle="bold"
@@ -44,7 +44,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Join our community of learners today"
+                android:text="@string/register_subtitle"
                 android:textColor="@color/on_surface_secondary"
                 android:textSize="@dimen/text_caption"
                 app:layout_constraintStart_toStartOf="parent"
@@ -70,7 +70,7 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Full Name"
+                        android:text="@string/full_name_label"
                         android:textColor="@color/on_surface"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -81,17 +81,17 @@
                         android:layout_height="@dimen/input_height"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/bg_input_field"
-                        android:hint="John Doe"
+                        android:hint="@string/full_name_hint"
                         android:inputType="textPersonName"
                         android:paddingHorizontal="16dp"
                         android:textSize="15sp" />
 
                     <!-- Email Field -->
                     <TextView
-                        android:layout_width="wrap_content"
+                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:text="Email Address"
+                        android:text="@string/email_label"
                         android:textColor="@color/on_surface"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -102,7 +102,7 @@
                         android:layout_height="@dimen/input_height"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/bg_input_field"
-                        android:hint="you@example.com"
+                        android:hint="@string/email_hint"
                         android:inputType="textEmailAddress"
                         android:paddingHorizontal="16dp"
                         android:textSize="15sp" />
@@ -112,7 +112,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="20dp"
-                        android:text="Password"
+                        android:text="@string/password_label"
                         android:textColor="@color/on_surface"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -123,7 +123,7 @@
                         android:layout_height="@dimen/input_height"
                         android:layout_marginTop="8dp"
                         android:background="@drawable/bg_input_field"
-                        android:hint="••••••••"
+                        android:hint="@string/password_hint"
                         android:inputType="textPassword"
                         android:paddingHorizontal="16dp"
                         android:textSize="15sp" />
@@ -136,22 +136,37 @@
                         android:layout_marginTop="32dp"
                         android:background="@drawable/bg_button_primary"
                         android:stateListAnimator="@null"
-                        android:text="Create Account"
+                        android:text="@string/sign_up"
                         android:textAllCaps="false"
                         android:textColor="@color/white"
                         android:textSize="16sp"
                         android:textStyle="bold"
                         app:backgroundTint="@null" />
 
-                    <TextView
-                        android:id="@+id/loginTextView"
+                    <LinearLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="24dp"
-                        android:text="Already have an account? Sign In"
-                        android:textColor="@color/primary"
-                        android:textStyle="bold" />
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/already_have_account"
+                            android:textColor="@color/on_surface_secondary"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/loginTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/sign_in"
+                            android:textColor="@color/primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                 </LinearLayout>
             </androidx.cardview.widget.CardView>

@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Your Library 📚"
+            android:text="@string/library_title"
             android:textColor="@color/on_surface"
             android:textSize="28sp"
             android:textStyle="bold" />
@@ -40,7 +40,7 @@
             android:background="@drawable/bg_input_field"
             android:drawableStart="@android:drawable/ic_menu_search"
             android:drawablePadding="12dp"
-            android:hint="Search quizzes..."
+            android:hint="@string/search_hint"
             android:inputType="text"
             android:paddingHorizontal="16dp"
             android:textColor="@color/on_surface"
@@ -76,7 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:text="No quizzes yet"
+                    android:text="@string/no_quizzes"
                     android:textColor="@color/on_surface"
                     android:textSize="18sp"
                     android:textStyle="bold" />
@@ -86,7 +86,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
                     android:gravity="center"
-                    android:text="Create your first quiz to see it here"
+                    android:text="@string/create_first_quiz"
                     android:textColor="@color/on_surface_secondary"
                     android:textSize="14sp" />
             </LinearLayout>
