@@ -1,0 +1,101 @@
+<resources>
+    <string name="app_name">AutoQuiz</string>
+    
+    <!-- Auth -->
+    <string name="welcome_title">Chào mừng tới AutoQuiz</string>
+    <string name="welcome_subtitle">Đăng nhập để tiếp tục hành trình học tập</string>
+    <string name="email_label">Địa chỉ Email</string>
+    <string name="email_hint">ten@vidu.com</string>
+    <string name="password_label">Mật khẩu</string>
+    <string name="password_hint">••••••••</string>
+    <string name="forgot_password">Quên mật khẩu?</string>
+    <string name="sign_in">Đăng nhập</string>
+    <string name="dont_have_account">Chưa có tài khoản?</string>
+    <string name="sign_up">Đăng ký</string>
+    <string name="register_title">Tạo tài khoản</string>
+    <string name="register_subtitle">Bắt đầu hành trình với trắc nghiệm AI</string>
+    <string name="full_name_label">Họ và tên</string>
+    <string name="full_name_hint">Nguyễn Văn A</string>
+    <string name="already_have_account">Đã có tài khoản?</string>
+    
+    <!-- Home -->
+    <string name="hello">Chào ní, %s! 👋</string>
+    <string name="home_subtitle">Sẵn sàng học điều mới chưa?</string>
+    <string name="current_streak">Chuỗi hiện tại</string>
+    <string name="days">ngày</string>
+    <string name="streak_motto">Cố gắng lên! Đừng để đứt chuỗi nha 🔥</string>
+    <string name="your_stats">Thống kê của bạn</string>
+    <string name="questions_count_format">%d câu hỏi</string>
+    <string name="quizzes_count">Bài tập</string>
+    <string name="avg_time">T.gian TB</string>
+    <string name="recently_added">Vừa thêm gần đây</string>
+    <string name="see_all">Xem tất cả</string>
+    <string name="btn_create_quiz">Tạo Quiz</string>
+    <string name="btn_library">Thư viện</string>
+    
+    <!-- Create -->
+    <string name="create_quiz_title">Tạo trắc nghiệm mới 📝</string>
+    <string name="quiz_title_label">Tiêu đề Quiz</string>
+    <string name="quiz_title_hint">vd: Sinh học chương 1</string>
+    <string name="your_text_label">Văn bản nguồn</string>
+    <string name="content_hint">Dán văn bản vào đây... (tối thiểu 50 từ)</string>
+    <string name="num_questions_label">Số lượng câu hỏi</string>
+    <string name="difficulty_label">Độ khó</string>
+    <string name="difficulty_easy">Dễ</string>
+    <string name="difficulty_medium">Trung bình</string>
+    <string name="difficulty_hard">Khó</string>
+    <string name="btn_generate_quiz">Tạo bộ trắc nghiệm</string>
+    
+    <!-- Library -->
+    <string name="library_title">Thư viện của bạn 📚</string>
+    <string name="no_quizzes">Chưa có bài nào</string>
+    <string name="create_first_quiz">Tạo bài đầu tiên để xem tại đây</string>
+    <string name="search_hint">Tìm kiếm bài tập...</string>
+    <string name="saved_quizzes_format">%d bài tập đã lưu</string>
+    <string name="delete_quiz">Xóa Quiz</string>
+    <string name="delete_quiz_msg">Bạn có chắc chắn muốn xóa bài trắc nghiệm này không?</string>
+    <string name="delete_confirm">Xóa</string>
+    <string name="cancel">Hủy</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Cài đặt</string>
+    <string name="settings_subtitle">Quản lý tùy chọn của bạn</string>
+    <string name="edit_profile">Chỉnh sửa hồ sơ</string>
+    <string name="about_autoquiz">Về AutoQuiz</string>
+    <string name="help_support">Trợ giúp &amp; Hỗ trợ</string>
+    <string name="notifications">Thông báo</string>
+    <string name="get_reminders">Nhận nhắc nhở trắc nghiệm</string>
+    <string name="daily_reminder">Nhắc nhở hàng ngày</string>
+    <string name="keep_streak_alive">Giữ chuỗi trắc nghiệm của bạn</string>
+    <string name="language">Ngôn ngữ</string>
+    <string name="privacy_policy">Chính sách bảo mật</string>
+    <string name="logout">Đăng xuất</string>
+
+    <!-- Quiz -->
+    <string name="question_counter_placeholder">Câu hỏi %1$d trên %2$d</string>
+    <string name="streak_placeholder">🔥 0</string>
+    <string name="category_placeholder">DANH MỤC</string>
+    <string name="question_text_placeholder">Nội dung câu hỏi</string>
+    <string name="percent_placeholder">0%</string>
+    <string name="select_one_answer">Chọn một đáp án đúng</string>
+    <string name="please_select_answer">Vui lòng chọn một đáp án</string>
+    <string name="btn_back">Quay lại</string>
+    <string name="btn_next">Tiếp theo</string>
+    <string name="btn_finish">Hoàn thành</string>
+    <string name="quiz_completed">Đã hoàn thành bài tập!</string>
+    
+    <!-- Results -->
+    <string name="correct_answers">Số câu đúng</string>
+    <string name="time_label">Thời gian</string>
+    <string name="accuracy_label">Độ chính xác</string>
+    <string name="btn_done">Xong</string>
+    <string name="review_quiz">Xem lại đáp án</string>
+    <string name="retry_wrong">Làm lại câu sai</string>
+    <string name="review_title">Xem lại bài làm</string>
+    <string name="btn_finish_review">Kết thúc xem lại</string>
+    
+    <!-- General -->
+    <string name="loading">Đang tải...</string>
+    <string name="error_occurred">Đã có lỗi xảy ra</string>
+    <string name="success">Thành công</string>
+</resources>
