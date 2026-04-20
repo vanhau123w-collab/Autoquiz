@@ -37,26 +37,23 @@ import com.example.myapplication.R;
 import com.example.myapplication.BuildConfig;
 import com.example.myapplication.data.AppDatabase;
 import com.example.myapplication.data.Quiz;
+import com.example.myapplication.main.AISettingsActivity;
 import com.example.myapplication.main.MainActivity;
+import com.example.myapplication.utils.AIModelManager;
 
 public class CreateFragment extends Fragment {
 
-    private EditText etContent, etQuizTitle;
+    private EditText etContent, etQuizTitle, etCustomPrompt, etCustomQuantity;
     private Button btnGenerateQuiz;
-    private Button btnQ5, btnQ10, btnQ15, btnQ20;
-    private Button btnEasy, btnMedium, btnHard;
+    private Button btnQ5, btnQ10, btnQ15;
     private String selectedQuantity = "10";
-    private String selectedDifficulty = "Medium";
-    
+    private AIModelManager aiModelManager;
+
     private final String GEMINI_API_KEY = BuildConfig.GEMINI_API_KEY;
 
     private ActivityResultLauncher<String[]> getContent = registerForActivityResult(
             new ActivityResultContracts.OpenDocument(),
-            uri -> {
-                if (uri != null) {
-                    extractTextFromDocx(uri);
-                }
-            }
+            uri -> { if (uri != null) extractTextFromDocx(uri); }
     );
 
     @Nullable
@@ -64,36 +61,57 @@ public class CreateFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_create, container, false);
 
-        etContent = view.findViewById(R.id.et_content);
-        etQuizTitle = view.findViewById(R.id.et_quiz_title);
-        btnGenerateQuiz = view.findViewById(R.id.btn_generate_quiz);
-        
-        view.findViewById(R.id.btn_upload_docx).setOnClickListener(v -> {
-            getContent.launch(new String[]{"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+        etContent        = view.findViewById(R.id.et_content);
+        etQuizTitle      = view.findViewById(R.id.et_quiz_title);
+        etCustomPrompt   = view.findViewById(R.id.et_custom_prompt);
+        etCustomQuantity = view.findViewById(R.id.et_custom_quantity);
+        btnGenerateQuiz  = view.findViewById(R.id.btn_generate_quiz);
+        aiModelManager   = new AIModelManager(requireContext());
+
+        // Collapsible custom prompt
+        android.widget.LinearLayout llPromptContainer = view.findViewById(R.id.ll_prompt_container);
+        android.widget.TextView tvArrow = view.findViewById(R.id.tv_prompt_arrow);
+        view.findViewById(R.id.btn_toggle_prompt).setOnClickListener(v -> {
+            boolean visible = llPromptContainer.getVisibility() == View.VISIBLE;
+            llPromptContainer.setVisibility(visible ? View.GONE : View.VISIBLE);
+            tvArrow.setText(visible ? "▼" : "▲");
         });
 
-        btnQ5 = view.findViewById(R.id.btn_q5);
+        view.findViewById(R.id.btn_ai_settings).setOnClickListener(v ->
+            startActivity(new android.content.Intent(getContext(), AISettingsActivity.class)));
+
+        view.findViewById(R.id.btn_upload_docx).setOnClickListener(v ->
+            getContent.launch(new String[]{"application/vnd.openxmlformats-officedocument.wordprocessingml.document"}));
+
+        btnQ5  = view.findViewById(R.id.btn_q5);
         btnQ10 = view.findViewById(R.id.btn_q10);
         btnQ15 = view.findViewById(R.id.btn_q15);
-        btnQ20 = view.findViewById(R.id.btn_q20);
-
-        btnEasy = view.findViewById(R.id.btn_easy);
-        btnMedium = view.findViewById(R.id.btn_medium);
-        btnHard = view.findViewById(R.id.btn_hard);
 
         setupSelectionButtons();
 
         btnGenerateQuiz.setOnClickListener(v -> {
             String content = etContent.getText().toString().trim();
-            String title = etQuizTitle.getText().toString().trim();
+            String title   = etQuizTitle.getText().toString().trim();
             if (title.isEmpty()) title = "Quiz (AI generated)";
-            
+
             if (content.isEmpty()) {
                 Toast.makeText(getContext(), "Vui lòng dán nội dung", Toast.LENGTH_SHORT).show();
                 return;
             }
+
+            // Ưu tiên ô tự nhập, giới hạn tối đa 20
+            String customQty = etCustomQuantity.getText().toString().trim();
+            if (!customQty.isEmpty()) {
+                int n = Integer.parseInt(customQty);
+                if (n < 1) n = 1;
+                if (n > 20) { n = 20; etCustomQuantity.setText("20"); }
+                selectedQuantity = String.valueOf(n);
+                // Bỏ chọn các chip
+                btnQ5.setSelected(false); btnQ10.setSelected(false); btnQ15.setSelected(false);
+            }
+
             final String finalTitle = title;
-            callGeminiAPI(content, selectedQuantity, selectedDifficulty, finalTitle);
+            callAI(content, selectedQuantity, finalTitle);
         });
 
         return view;
@@ -101,31 +119,49 @@ public class CreateFragment extends Fragment {
 
     private void setupSelectionButtons() {
         View.OnClickListener quantityListener = v -> {
-            btnQ5.setSelected(false); btnQ10.setSelected(false);
-            btnQ15.setSelected(false); btnQ20.setSelected(false);
+            btnQ5.setSelected(false); btnQ10.setSelected(false); btnQ15.setSelected(false);
             v.setSelected(true);
-            selectedQuantity = ((Button)v).getText().toString();
+            selectedQuantity = ((Button) v).getText().toString();
+            etCustomQuantity.setText(""); // xóa ô tự nhập khi chọn chip
         };
         btnQ5.setOnClickListener(quantityListener);
         btnQ10.setOnClickListener(quantityListener);
         btnQ15.setOnClickListener(quantityListener);
-        btnQ20.setOnClickListener(quantityListener);
         btnQ10.setSelected(true);
-
-        View.OnClickListener diffListener = v -> {
-            btnEasy.setSelected(false); btnMedium.setSelected(false); btnHard.setSelected(false);
-            v.setSelected(true);
-            selectedDifficulty = ((Button)v).getText().toString();
-        };
-        btnEasy.setOnClickListener(diffListener);
-        btnMedium.setOnClickListener(diffListener);
-        btnHard.setOnClickListener(diffListener);
-        btnMedium.setSelected(true);
     }
 
-    private void callGeminiAPI(String sourceContent, String quantity, String difficulty, String finalTitle) {
+    private void callAI(String content, String quantity, String title) {
+        String provider    = aiModelManager.getSelectedProvider();
+        String displayName = aiModelManager.getSelectedModel();
+        String modelId     = AIModelManager.toApiModelId(provider, displayName);
+        String baseUrl     = AIModelManager.getBaseUrl(provider);
+        String fullUrl     = provider.equals(AIModelManager.PROVIDER_GEMINI)
+                ? "https://generativelanguage.googleapis.com/v1/models/" + modelId + ":generateContent"
+                : baseUrl;
+        Log.d("GeminiAPI", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        Log.d("GeminiAPI", "Provider : " + provider);
+        Log.d("GeminiAPI", "Model ID : " + modelId);
+        Log.d("GeminiAPI", "URL      : " + fullUrl);
+        Log.d("GeminiAPI", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        switch (provider) {
+            case AIModelManager.PROVIDER_GROQ:
+            case AIModelManager.PROVIDER_OPENROUTER:
+                callOpenAICompatible(content, quantity, title, provider, modelId);
+                break;
+            default:
+                callGeminiAPI(content, quantity, title, modelId);
+                break;
+        }
+    }
+
+    private void callGeminiAPI(String sourceContent, String quantity, String finalTitle, String modelId) {
         btnGenerateQuiz.setEnabled(false);
         btnGenerateQuiz.setText("AI đang soạn câu hỏi...");
+
+        // Lấy key: ưu tiên key từ manager, fallback về BuildConfig
+        String apiKey = aiModelManager.nextKey(AIModelManager.PROVIDER_GEMINI);
+        if (apiKey == null || apiKey.isEmpty()) apiKey = BuildConfig.GEMINI_API_KEY;
+        final String finalApiKey = apiKey;
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
@@ -134,25 +170,9 @@ public class CreateFragment extends Fragment {
                 .build();
         MediaType JSON = MediaType.get("application/json; charset=utf-8");
 
-        if (sourceContent.length() < 100) {
-            Toast.makeText(getContext(), "Nội dung quá ngắn để tạo câu hỏi chất lượng. Vui lòng nhập thêm thông tin!", Toast.LENGTH_SHORT).show();
-            btnGenerateQuiz.setEnabled(true);
-            btnGenerateQuiz.setText("Generate Quiz");
-            return;
-        }
 
-        String prompt = "### SYSTEM INSTRUCTIONS ###\n" +
-                       "You are a strict Quiz Extraction Tool. Your only source of truth is the [SOURCE TEXT] provided below.\n" +
-                       "1. ONLY create questions based on the [SOURCE TEXT].\n" +
-                       "2. DO NOT use external knowledge. If the text doesn't contain enough info to create " + quantity + " questions, generate only as many as possible.\n" +
-                       "3. Each question must have exactly 4 options. Options must be plausible but only one is correct according to the text.\n" +
-                       "4. Response language: Vietnamese.\n" +
-                       "5. Difficulty: " + difficulty + ".\n" +
-                       "\n### [SOURCE TEXT] ###\n" + sourceContent + "\n" +
-                       "\n### OUTPUT FORMAT ###\n" +
-                       "Return ONLY a raw JSON array of objects. No markdown, no explanations.\n" +
-                       "Format: [{\"question\": \"...\", \"options\": [\"A\", \"B\", \"C\", \"D\"], \"answer\": 0-3}]";
 
+        String prompt = buildPrompt(sourceContent, quantity);
         try {
             JSONObject jsonBody = new JSONObject();
             JSONArray contents = new JSONArray();
@@ -164,13 +184,16 @@ public class CreateFragment extends Fragment {
             jsonBody.put("contents", contents);
 
             RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
-            String url = "https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=" + GEMINI_API_KEY;
+            String url = "https://generativelanguage.googleapis.com/v1/models/" + modelId + ":generateContent?key=" + finalApiKey;
 
             Request request = new Request.Builder().url(url).post(body).build();
+            Log.d("GeminiAPI", "Gửi request tới: " + url);
+            Log.d("GeminiAPI", "Prompt length: " + prompt.length() + " chars");
 
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
+                    Log.e("GeminiAPI", "Network failure", e);
                     if(getActivity() == null) return;
                     getActivity().runOnUiThread(() -> {
                         btnGenerateQuiz.setEnabled(true);
@@ -183,7 +206,9 @@ public class CreateFragment extends Fragment {
                 public void onResponse(Call call, Response response) throws IOException {
                     if(getActivity() == null) return;
                     String responseBody = response.body() != null ? response.body().string() : "";
+                    Log.d("GeminiAPI", "Response code: " + response.code());
                     if (response.isSuccessful()) {
+                        Log.d("GeminiAPI", "Response body: " + responseBody);
                         try {
                             JSONObject jsonResponse = new JSONObject(responseBody);
                             String aiText = jsonResponse.getJSONArray("candidates")
@@ -192,64 +217,199 @@ public class CreateFragment extends Fragment {
                                      .getJSONArray("parts")
                                      .getJSONObject(0)
                                      .getString("text");
-
-                            String cleanedAiText = "";
-                            java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("\\[[\\s\\S]*\\]");
-                            java.util.regex.Matcher matcher = pattern.matcher(aiText);
-                            if (matcher.find()) {
-                                cleanedAiText = matcher.group();
-                            } else {
-                                cleanedAiText = aiText.replace("```json", "").replace("```", "").trim();
-                            }
-
-                            final String finalAiText = cleanedAiText;
-                            getActivity().runOnUiThread(() -> {
-                                if (finalAiText.isEmpty() || !finalAiText.startsWith("[")) {
-                                    Toast.makeText(getContext(), "AI trả về dữ liệu không đúng định dạng, hãy thử lại", Toast.LENGTH_SHORT).show();
-                                    btnGenerateQuiz.setEnabled(true);
-                                    btnGenerateQuiz.setText("Generate Quiz");
-                                    return;
-                                }
-                                saveQuizToLibrary(finalTitle, finalAiText, quantity);
-                                Toast.makeText(getContext(), "Tạo thành công!", Toast.LENGTH_LONG).show();
-                                btnGenerateQuiz.setEnabled(true);
-                                btnGenerateQuiz.setText("Generate Quiz");
-                                etContent.setText("");
-                                etQuizTitle.setText("");
-                            });
+                            Log.d("GeminiAPI", "AI raw text: " + aiText);
+                            handleAIText(aiText, finalTitle, quantity);
                         } catch (Exception e) {
+                            Log.e("GeminiAPI", "Parse error", e);
+                            Log.e("GeminiAPI", "Raw response: " + responseBody);
                             getActivity().runOnUiThread(() -> {
-                                btnGenerateQuiz.setEnabled(true);
-                                btnGenerateQuiz.setText("Generate Quiz");
+                                resetBtn();
                                 Toast.makeText(getContext(), "AI trả về dữ liệu lạ, hãy thử lại", Toast.LENGTH_SHORT).show();
                             });
                         }
                     } else {
                         String finalResponseBody = responseBody;
-                        Log.e("GeminiAPI", "Lỗi: " + response.code() + " - " + finalResponseBody);
+                        Log.e("GeminiAPI", "HTTP Error " + response.code() + " - " + finalResponseBody);
                         getActivity().runOnUiThread(() -> {
-                            btnGenerateQuiz.setEnabled(true);
-                            btnGenerateQuiz.setText("Generate Quiz");
-                            
+                            resetBtn();
                             String errorMsg = "Lỗi " + response.code();
                             try {
                                 JSONObject jsonResponse = new JSONObject(finalResponseBody);
                                 if (jsonResponse.has("error")) {
-                                    JSONObject errorObj = jsonResponse.getJSONObject("error");
-                                    errorMsg += ": " + errorObj.getString("message");
-                                } else {
-                                    errorMsg += ": " + finalResponseBody;
+                                    errorMsg += ": " + jsonResponse.getJSONObject("error").getString("message");
                                 }
-                            } catch (Exception e) {
-                                errorMsg += ": " + finalResponseBody;
-                            }
-                            
+                            } catch (Exception e) { errorMsg += ": " + finalResponseBody; }
                             Toast.makeText(getContext(), errorMsg, Toast.LENGTH_LONG).show();
                         });
                     }
                 }
             });
         } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void callOpenAICompatible(String sourceContent, String quantity,
+                                       String finalTitle, String provider, String model) {
+        String apiKey = aiModelManager.nextKey(provider);
+        if (apiKey == null || apiKey.isEmpty()) {
+            Toast.makeText(getContext(), "Chưa có API key cho " + provider + ". Vào AI Settings để thêm.", Toast.LENGTH_LONG).show();
+            return;
+        }
+        btnGenerateQuiz.setEnabled(false);
+        btnGenerateQuiz.setText("AI đang soạn câu hỏi...");
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                .readTimeout(60, java.util.concurrent.TimeUnit.SECONDS)
+                .build();
+
+        String prompt = buildPrompt(sourceContent, quantity);
+        try {
+            org.json.JSONObject body = new org.json.JSONObject();
+            body.put("model", model);
+            org.json.JSONArray messages = new org.json.JSONArray();
+            org.json.JSONObject msg = new org.json.JSONObject();
+            msg.put("role", "user");
+            msg.put("content", prompt);
+            messages.put(msg);
+            body.put("messages", messages);
+
+            okhttp3.RequestBody reqBody = okhttp3.RequestBody.create(body.toString(),
+                    okhttp3.MediaType.get("application/json; charset=utf-8"));
+            okhttp3.Request.Builder reqBuilder = new okhttp3.Request.Builder()
+                    .url(AIModelManager.getBaseUrl(provider))
+                    .addHeader("Authorization", "Bearer " + apiKey)
+                    .post(reqBody);
+            if (provider.equals(AIModelManager.PROVIDER_OPENROUTER)) {
+                reqBuilder.addHeader("HTTP-Referer", "https://autoquiz.app");
+            }
+
+            Log.d("GeminiAPI", provider + " request → model: " + model);
+            client.newCall(reqBuilder.build()).enqueue(new okhttp3.Callback() {
+                @Override public void onFailure(okhttp3.Call call, java.io.IOException e) {
+                    Log.e("GeminiAPI", provider + " network failure", e);
+                    if (getActivity() == null) return;
+                    getActivity().runOnUiThread(() -> { resetBtn(); Toast.makeText(getContext(), "Lỗi mạng: " + e.getMessage(), Toast.LENGTH_LONG).show(); });
+                }
+                @Override public void onResponse(okhttp3.Call call, okhttp3.Response response) throws java.io.IOException {
+                    if (getActivity() == null) return;
+                    String rb = response.body() != null ? response.body().string() : "";
+                    Log.d("GeminiAPI", provider + " response " + response.code() + ": " + rb);
+
+                    if (response.code() == 429) {
+                        // Parse message chi tiết từ provider
+                        String userMsg = "Rate limit! Đổi model khác hoặc thử lại sau.";
+                        try {
+                            org.json.JSONObject err = new org.json.JSONObject(rb)
+                                    .getJSONObject("error");
+                            // OpenRouter trả message trong metadata.raw
+                            if (err.has("metadata")) {
+                                String raw = err.getJSONObject("metadata").optString("raw", "");
+                                if (!raw.isEmpty()) userMsg = raw;
+                            } else {
+                                userMsg = err.optString("message", userMsg);
+                            }
+                        } catch (Exception ignored) {}
+                        Log.e("GeminiAPI", provider + " 429: " + userMsg);
+                        final String finalMsg = userMsg;
+                        getActivity().runOnUiThread(() -> {
+                            resetBtn();
+                            Toast.makeText(getContext(), "⚠️ " + finalMsg, Toast.LENGTH_LONG).show();
+                        });
+                        return;
+                    }
+
+                    if (response.isSuccessful()) {
+                        try {
+                            org.json.JSONObject respJson = new org.json.JSONObject(rb);
+                            // Server echo: xác nhận model thực tế đã chạy
+                            String serverModel = respJson.optString("model", "unknown");
+                            Log.d("GeminiAPI", "✅ Server confirmed model: " + serverModel);
+                            String aiText = respJson
+                                    .getJSONArray("choices").getJSONObject(0)
+                                    .getJSONObject("message").getString("content");
+                            handleAIText(aiText, finalTitle, quantity);
+                        } catch (Exception e) {
+                            Log.e("GeminiAPI", provider + " parse error", e);
+                            getActivity().runOnUiThread(() -> { resetBtn(); Toast.makeText(getContext(), "Parse lỗi", Toast.LENGTH_SHORT).show(); });
+                        }
+                    } else {
+                        Log.e("GeminiAPI", provider + " HTTP " + response.code() + " - " + rb);
+                        getActivity().runOnUiThread(() -> { resetBtn(); Toast.makeText(getContext(), "Lỗi " + response.code(), Toast.LENGTH_LONG).show(); });
+                    }
+                }
+            });
+        } catch (Exception e) { e.printStackTrace(); resetBtn(); }
+    }
+
+    private String buildPrompt(String sourceContent, String quantity) {
+        String custom = etCustomPrompt != null ? etCustomPrompt.getText().toString().trim() : "";
+        if (!custom.isEmpty()) {
+            return custom + "\n\n### [SOURCE TEXT] ###\n" + sourceContent +
+                   "\n\n### OUTPUT FORMAT ###\n" +
+                   "Return ONLY a raw JSON array. No markdown.\n" +
+                   "Format: [{\"question\": \"...\", \"options\": [\"A\", \"B\", \"C\", \"D\"], \"type\": \"single|multiple\", \"answers\": [0,1,2,3], \"difficulty\": 1-3}]";
+        }
+        return "Tạo " + quantity + " câu hỏi trắc nghiệm từ văn bản sau. Yêu cầu:\n" +
+               "1. CHỈ dựa vào nội dung văn bản, KHÔNG dùng kiến thức bên ngoài\n" +
+               "2. Độ khó tăng dần: câu đầu dễ (1), giữa trung bình (2), cuối khó (3)\n" +
+               "3. Mỗi câu có 4 đáp án\n" +
+               "4. Có 2 loại: \"single\" (1 đáp án đúng) và \"multiple\" (nhiều đáp án đúng)\n" +
+               "5. Khoảng 70% câu single, 30% câu multiple\n" +
+               "6. Trả lời bằng tiếng Việt\n" +
+               "7. Trả về JSON array thuần, KHÔNG có markdown\n\n" +
+               "Văn bản:\n" + sourceContent + "\n\n" +
+               "Format: [{\"question\":\"...\",\"options\":[\"A\",\"B\",\"C\",\"D\"],\"type\":\"single\",\"answers\":[0],\"difficulty\":1}]\n" +
+               "Với type=\"multiple\", answers có thể là [0,2] hoặc [1,2,3] tùy số đáp án đúng";
+    }
+
+    private void handleAIText(String aiText, String finalTitle, String quantity) {
+        if (getActivity() == null) return;
+        String cleaned = "";
+        java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("\\[[\\s\\S]*\\]").matcher(aiText);
+        if (matcher.find()) cleaned = matcher.group();
+        else cleaned = aiText.replace("```json", "").replace("```", "").trim();
+
+        Log.d("GeminiAPI", "Cleaned JSON: " + cleaned);
+        final String finalCleaned = cleaned;
+        getActivity().runOnUiThread(() -> {
+            if (finalCleaned.isEmpty() || !finalCleaned.startsWith("[")) {
+                Log.e("GeminiAPI", "JSON không hợp lệ: " + finalCleaned);
+                Toast.makeText(getContext(), "AI trả về dữ liệu không đúng định dạng", Toast.LENGTH_SHORT).show();
+                resetBtn(); return;
+            }
+            
+            // Shuffle questions randomly
+            String shuffledJson = shuffleQuestions(finalCleaned);
+            saveQuizToLibrary(finalTitle, shuffledJson, quantity);
+            Toast.makeText(getContext(), "Tạo thành công!", Toast.LENGTH_LONG).show();
+            resetBtn();
+            etContent.setText("");
+            etQuizTitle.setText("");
+        });
+    }
+
+    private String shuffleQuestions(String jsonData) {
+        try {
+            JSONArray array = new JSONArray(jsonData);
+            java.util.List<JSONObject> list = new java.util.ArrayList<>();
+            for (int i = 0; i < array.length(); i++) {
+                list.add(array.getJSONObject(i));
+            }
+            java.util.Collections.shuffle(list);
+            JSONArray shuffled = new JSONArray();
+            for (JSONObject obj : list) {
+                shuffled.put(obj);
+            }
+            return shuffled.toString();
+        } catch (Exception e) {
+            Log.e("GeminiAPI", "Shuffle error, returning original", e);
+            return jsonData;
+        }
+    }
+
+    private void resetBtn() {
+        btnGenerateQuiz.setEnabled(true);
+        btnGenerateQuiz.setText("Generate Quiz");
     }
 
     private void extractTextFromDocx(Uri uri) {

@@ -48,5 +48,6 @@ public class RegisterActivity extends AppCompatActivity {
         });
 
         loginTextView.setOnClickListener(v -> finish());
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
     }
 }

@@ -62,5 +62,6 @@ public class ForgotPasswordActivity extends AppCompatActivity {
         });
 
         backToLoginTv.setOnClickListener(v -> finish());
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
     }
 }

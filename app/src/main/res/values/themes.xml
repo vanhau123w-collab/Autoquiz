@@ -59,4 +59,13 @@
         <item name="android:textStyle">bold</item>
         <item name="android:cursorVisible">false</item>
     </style>
+
+    <!-- Custom Spinner Dropdown Style -->
+    <style name="SpinnerDropdownStyle" parent="Widget.AppCompat.ListView.DropDown">
+        <item name="android:background">@color/surface</item>
+        <item name="android:divider">@color/outline_variant</item>
+        <item name="android:dividerHeight">1dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
 </resources>

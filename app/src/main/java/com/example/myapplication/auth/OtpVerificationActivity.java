@@ -82,6 +82,7 @@ public class OtpVerificationActivity extends AppCompatActivity {
             tvResend.setVisibility(View.GONE);
             tvCountdown.setVisibility(View.VISIBLE);
         });
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
     }
 
     private void setupOtpInputs() {

@@ -84,11 +84,11 @@ public class HomeFragment extends Fragment {
             List<com.example.myapplication.data.QuizResult> results = quizDao.getAllResults();
             
             // Stats from QuizResult
-            int totalQuizzes = quizDao.getTotalQuizzesTaken();
+            int quizLibraryCount = quizList.size();
             double avgAccuracy = quizDao.getAverageAccuracy();
             long avgTimeMillis = quizDao.getAverageTimeSpent();
 
-            tvQuizCount.setText(String.valueOf(totalQuizzes));
+            tvQuizCount.setText(String.valueOf(quizLibraryCount));
             tvAccuracy.setText(String.format(Locale.getDefault(), "%.0f%%", avgAccuracy));
             
             // Format time: mm:ss

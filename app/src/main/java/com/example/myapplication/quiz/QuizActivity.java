@@ -25,20 +25,23 @@ public class QuizActivity extends AppCompatActivity {
         super.attachBaseContext(com.example.myapplication.utils.LocaleHelper.onAttach(newBase));
     }
 
-    private TextView tvQuestionCounter, tvProgressPercent, tvQuestionText, tvCategory;
+    private TextView tvQuestionCounter, tvProgressPercent, tvQuestionText, tvCategory, tvQuestionType, tvStreak;
     private LinearProgressIndicator progressBar;
     private MaterialCardView[] optionCards = new MaterialCardView[4];
     private TextView[] optionTexts = new TextView[4];
     private MaterialCardView[] indicators = new MaterialCardView[4];
     private TextView[] indicatorTexts = new TextView[4];
+    private ImageView[] checkIcons = new ImageView[4]; 
     
     private MaterialButton btnNext, btnBack;
     private ImageView btnClose;
 
     private List<Question> questionList = new ArrayList<>();
     private int currentQuestionIndex = 0;
+    private int currentStreak = 0;
     private String currentQuizJson = "";
-    private int[] userAnswers;
+    private int[] userAnswers; 
+    private List<Integer>[] userMultiAnswers; 
     private boolean[] isQuestionAnswered;
     private long startTime;
     private int quizId = -1;
@@ -62,9 +65,11 @@ public class QuizActivity extends AppCompatActivity {
         }
         
         userAnswers = new int[questionList.size()];
+        userMultiAnswers = new List[questionList.size()];
         isQuestionAnswered = new boolean[questionList.size()];
         for(int i=0; i<userAnswers.length; i++) {
             userAnswers[i] = -1;
+            userMultiAnswers[i] = new ArrayList<>();
             isQuestionAnswered[i] = false;
         }
         
@@ -79,6 +84,8 @@ public class QuizActivity extends AppCompatActivity {
         tvProgressPercent = findViewById(R.id.tv_progress_percent);
         tvQuestionText = findViewById(R.id.tv_question_text);
         tvCategory = findViewById(R.id.tv_category);
+        tvQuestionType = findViewById(R.id.tv_question_type);
+        tvStreak = findViewById(R.id.streak_count);
         progressBar = findViewById(R.id.quiz_progress_bar);
         
         optionCards[0] = findViewById(R.id.option_a);
@@ -101,6 +108,11 @@ public class QuizActivity extends AppCompatActivity {
         indicatorTexts[2] = findViewById(R.id.tv_indicator_c);
         indicatorTexts[3] = findViewById(R.id.tv_indicator_d);
 
+        checkIcons[0] = findViewById(R.id.check_icon_a);
+        checkIcons[1] = findViewById(R.id.check_icon_b);
+        checkIcons[2] = findViewById(R.id.check_icon_c);
+        checkIcons[3] = findViewById(R.id.check_icon_d);
+
         btnNext = findViewById(R.id.btn_next_quiz);
         btnBack = findViewById(R.id.btn_back_quiz);
         btnClose = findViewById(R.id.close_quiz);
@@ -113,9 +125,39 @@ public class QuizActivity extends AppCompatActivity {
         }
 
         btnNext.setOnClickListener(v -> {
-            if (userAnswers[currentQuestionIndex] == -1) {
-                Toast.makeText(this, getString(R.string.please_select_answer), Toast.LENGTH_SHORT).show();
-                return;
+            Question q = questionList.get(currentQuestionIndex);
+            if (q.type.equals("multiple")) {
+                if (userMultiAnswers[currentQuestionIndex].isEmpty()) {
+                    Toast.makeText(this, "Vui lòng chọn ít nhất 1 đáp án", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                
+                // Submit multi-answer
+                if (!isQuestionAnswered[currentQuestionIndex]) {
+                    isQuestionAnswered[currentQuestionIndex] = true;
+                    // Streak logic for multi-select
+                    List<Integer> userAns = userMultiAnswers[currentQuestionIndex];
+                    if (userAns.size() == q.correctAnswers.length) {
+                        boolean allCorrect = true;
+                        for (int ans : q.correctAnswers) {
+                            if (!userAns.contains(ans)) {
+                                allCorrect = false;
+                                break;
+                            }
+                        }
+                        if (allCorrect) currentStreak++;
+                        else currentStreak = 0;
+                    } else {
+                        currentStreak = 0;
+                    }
+                    highlightSelectedOption(-1);
+                    return; // Wait for next click to proceed
+                }
+            } else {
+                if (userAnswers[currentQuestionIndex] == -1) {
+                    Toast.makeText(this, getString(R.string.please_select_answer), Toast.LENGTH_SHORT).show();
+                    return;
+                }
             }
 
             if (currentQuestionIndex < questionList.size() - 1) {
@@ -139,8 +181,24 @@ public class QuizActivity extends AppCompatActivity {
     private void finishQuiz() {
         int correctCount = 0;
         for (int i = 0; i < questionList.size(); i++) {
-            if (userAnswers[i] == questionList.get(i).correctAnswerIndex) {
-                correctCount++;
+            Question q = questionList.get(i);
+            if (q.type.equals("multiple")) {
+                // Check if all correct answers are selected and no wrong ones
+                List<Integer> userAns = userMultiAnswers[i];
+                if (userAns.size() == q.correctAnswers.length) {
+                    boolean allCorrect = true;
+                    for (int ans : q.correctAnswers) {
+                        if (!userAns.contains(ans)) {
+                            allCorrect = false;
+                            break;
+                        }
+                    }
+                    if (allCorrect) correctCount++;
+                }
+            } else {
+                if (userAnswers[i] == q.correctAnswerIndex) {
+                    correctCount++;
+                }
             }
         }
 
@@ -168,58 +226,133 @@ public class QuizActivity extends AppCompatActivity {
     }
 
     private void selectOption(int index) {
-        if (isQuestionAnswered[currentQuestionIndex]) return;
-
-        userAnswers[currentQuestionIndex] = index;
-        isQuestionAnswered[currentQuestionIndex] = true;
-        highlightSelectedOption(index);
+        Question q = questionList.get(currentQuestionIndex);
+        
+        if (q.type.equals("multiple")) {
+            // Multi-select mode
+            List<Integer> selected = userMultiAnswers[currentQuestionIndex];
+            if (selected.contains(index)) {
+                selected.remove(Integer.valueOf(index));
+            } else {
+                selected.add(index);
+            }
+            highlightSelectedOption(index);
+        } else {
+            // Single-select mode
+            if (isQuestionAnswered[currentQuestionIndex]) return;
+            userAnswers[currentQuestionIndex] = index;
+            isQuestionAnswered[currentQuestionIndex] = true;
+            
+            // Streak logic for single-select
+            if (index == q.correctAnswerIndex) {
+                currentStreak++;
+            } else {
+                currentStreak = 0;
+            }
+            
+            highlightSelectedOption(index);
+        }
     }
 
     private void highlightSelectedOption(int index) {
-        int correctIndex = questionList.get(currentQuestionIndex).correctAnswerIndex;
+        Question q = questionList.get(currentQuestionIndex);
         boolean answered = isQuestionAnswered[currentQuestionIndex];
 
-        for (int i = 0; i < 4; i++) {
-            if (answered) {
-                // Show result coloring
-                if (i == correctIndex) {
-                    // Correct answer - always Green
-                    optionCards[i].setStrokeWidth(4);
-                    optionCards[i].setStrokeColor(ContextCompat.getColor(this, R.color.success));
-                    optionCards[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.success_container));
-                    indicators[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.success));
-                    indicatorTexts[i].setTextColor(Color.WHITE);
-                } else if (i == index && index != correctIndex) {
-                    // User was wrong - show Red
-                    optionCards[i].setStrokeWidth(4);
-                    optionCards[i].setStrokeColor(ContextCompat.getColor(this, R.color.error));
-                    optionCards[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.error_container));
-                    indicators[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.error));
-                    indicatorTexts[i].setTextColor(Color.WHITE);
-                } else {
-                    // Other options
-                    resetOptionCard(i);
+        if (q.type.equals("multiple")) {
+            // Multi-select highlighting
+            List<Integer> selected = userMultiAnswers[currentQuestionIndex];
+            for (int i = 0; i < 4; i++) {
+                final int currentIndex = i;
+                boolean isCorrect = false;
+                for (int ans : q.correctAnswers) {
+                    if (ans == currentIndex) {
+                        isCorrect = true;
+                        break;
+                    }
                 }
-            } else {
-                // Not answered yet - show selection or default
-                if (i == index) {
-                    optionCards[i].setStrokeWidth(4);
-                    optionCards[i].setStrokeColor(ContextCompat.getColor(this, R.color.primary));
-                    optionCards[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.primary_fixed));
-                    indicators[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.primary));
-                    indicatorTexts[i].setTextColor(Color.WHITE);
+                boolean isSelected = selected.contains(currentIndex);
+                
+                if (answered) {
+                    // Show results
+                    if (isCorrect) {
+                        optionCards[i].setStrokeWidth(dpToPx(2));
+                        optionCards[i].setStrokeColor(ContextCompat.getColor(this, R.color.success));
+                        optionCards[i].setCardBackgroundColor(Color.parseColor("#F0FDF4")); // success light
+                        indicators[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.success));
+                        indicatorTexts[i].setTextColor(Color.WHITE);
+                        checkIcons[i].setVisibility(View.VISIBLE);
+                    } else if (isSelected) {
+                        optionCards[i].setStrokeWidth(dpToPx(2));
+                        optionCards[i].setStrokeColor(ContextCompat.getColor(this, R.color.error));
+                        optionCards[i].setCardBackgroundColor(Color.parseColor("#FEF2F2")); // error light
+                        indicators[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.error));
+                        indicatorTexts[i].setTextColor(Color.WHITE);
+                        checkIcons[i].setVisibility(View.VISIBLE);
+                    } else {
+                        resetOptionCard(i);
+                        checkIcons[i].setVisibility(View.GONE);
+                    }
                 } else {
-                    resetOptionCard(i);
+                    // Show selection
+                    if (isSelected) {
+                        optionCards[i].setStrokeWidth(dpToPx(2));
+                        optionCards[i].setStrokeColor(ContextCompat.getColor(this, R.color.primary));
+                        optionCards[i].setCardBackgroundColor(Color.parseColor("#EFF6FF")); // primary light
+                        indicators[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.primary));
+                        indicatorTexts[i].setTextColor(Color.WHITE);
+                        checkIcons[i].setVisibility(View.VISIBLE);
+                    } else {
+                        resetOptionCard(i);
+                        checkIcons[i].setVisibility(View.GONE);
+                    }
+                }
+            }
+        } else {
+            // Single-select highlighting
+            int correctIndex = q.correctAnswerIndex;
+            for (int i = 0; i < 4; i++) {
+                checkIcons[i].setVisibility(View.GONE);
+                if (answered) {
+                    if (i == correctIndex) {
+                        optionCards[i].setStrokeWidth(dpToPx(2));
+                        optionCards[i].setStrokeColor(ContextCompat.getColor(this, R.color.success));
+                        optionCards[i].setCardBackgroundColor(Color.parseColor("#F0FDF4"));
+                        indicators[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.success));
+                        indicatorTexts[i].setTextColor(Color.WHITE);
+                    } else if (i == index && index != correctIndex) {
+                        optionCards[i].setStrokeWidth(dpToPx(2));
+                        optionCards[i].setStrokeColor(ContextCompat.getColor(this, R.color.error));
+                        optionCards[i].setCardBackgroundColor(Color.parseColor("#FEF2F2"));
+                        indicators[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.error));
+                        indicatorTexts[i].setTextColor(Color.WHITE);
+                    } else {
+                        resetOptionCard(i);
+                    }
+                } else {
+                    if (i == index) {
+                        optionCards[i].setStrokeWidth(dpToPx(2));
+                        optionCards[i].setStrokeColor(ContextCompat.getColor(this, R.color.primary));
+                        optionCards[i].setCardBackgroundColor(Color.parseColor("#EFF6FF"));
+                        indicators[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.primary));
+                        indicatorTexts[i].setTextColor(Color.WHITE);
+                    } else {
+                        resetOptionCard(i);
+                    }
                 }
             }
         }
     }
 
     private void resetOptionCard(int i) {
-        optionCards[i].setStrokeWidth(0);
-        optionCards[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.surface_container_lowest));
-        indicators[i].setCardBackgroundColor(ContextCompat.getColor(this, R.color.surface_container_low));
-        indicatorTexts[i].setTextColor(ContextCompat.getColor(this, R.color.primary));
+        optionCards[i].setStrokeWidth(dpToPx(1));
+        optionCards[i].setStrokeColor(Color.parseColor("#F1F5F9"));
+        optionCards[i].setCardBackgroundColor(Color.WHITE);
+        indicators[i].setCardBackgroundColor(Color.parseColor("#F8FAFC"));
+        indicatorTexts[i].setTextColor(Color.parseColor("#64748B"));
+    }
+
+    private int dpToPx(int dp) {
+        return Math.round(dp * getResources().getDisplayMetrics().density);
     }
 
     private void updateUI() {
@@ -231,7 +364,18 @@ public class QuizActivity extends AppCompatActivity {
 
         Question q = questionList.get(currentQuestionIndex);
         tvQuestionText.setText(q.question);
-        tvCategory.setText(q.category);
+        
+        // Display difficulty badge
+        String difficultyText = q.difficulty == 1 ? "DỄ" : (q.difficulty == 3 ? "KHÓ" : "TRUNG BÌNH");
+        tvCategory.setText(difficultyText);
+        
+        // Display question type
+        if (q.type.equals("multiple")) {
+            tvQuestionType.setText("CHỌN NHIỀU ĐÁP ÁN");
+            tvQuestionType.setVisibility(View.VISIBLE);
+        } else {
+            tvQuestionType.setVisibility(View.GONE);
+        }
         
         optionTexts[0].setText(q.options[0]);
         optionTexts[1].setText(q.options[1]);
@@ -243,24 +387,25 @@ public class QuizActivity extends AppCompatActivity {
         progressBar.setProgress(progress);
         tvProgressPercent.setText(progress + "%");
         
-        tvQuestionCounter.setText(getString(R.string.question_counter_placeholder, currentQuestionIndex + 1, size));
+        tvQuestionCounter.setText("Question " + (currentQuestionIndex + 1) + " of " + size);
+        tvStreak.setText("🔥 " + currentStreak);
 
         // Restore user answer if exists
         highlightSelectedOption(userAnswers[currentQuestionIndex]);
 
         btnBack.setVisibility(currentQuestionIndex == 0 ? View.INVISIBLE : View.VISIBLE);
-        btnNext.setText(currentQuestionIndex == size - 1 ? getString(R.string.btn_finish) : getString(R.string.btn_next));
+        btnNext.setText(currentQuestionIndex == size - 1 ? "Finish" : "Next");
     }
 
     private void loadMockQuestions() {
         questionList.add(new Question("Hệ thống Ô tô", "Bộ phận nào chịu trách nhiệm chính trong việc chuyển hóa hóa năng của nhiên liệu thành cơ năng?", 
-                new String[]{"Kim phun nhiên liệu", "Cụm Piston và Xi-lanh", "Hệ thống Máy phát điện", "Vỏ bộ tăng áp"}, 1));
+                new String[]{"Kim phun nhiên liệu", "Cụm Piston và Xi-lanh", "Hệ thống Máy phát điện", "Vỏ bộ tăng áp"}, 1, 2));
         
         questionList.add(new Question("Công nghệ", "AI là viết tắt của cụm từ nào sau đây?", 
-                new String[]{"Artificial Intelligence", "Advanced Integration", "Automated Interface", "Active Interaction"}, 0));
+                new String[]{"Artificial Intelligence", "Advanced Integration", "Automated Interface", "Active Interaction"}, 0, 1));
 
         questionList.add(new Question("Lịch sử", "Thành phố nào là thủ đô của Việt Nam?", 
-                new String[]{"Đà Nẵng", "Hồ Chí Minh", "Hà Nội", "Huế"}, 2));
+                new String[]{"Đà Nẵng", "Hồ Chí Minh", "Hà Nội", "Huế"}, 2, 1));
     }
 
     private void loadAiQuestions(String jsonData, String title) {
@@ -274,8 +419,22 @@ public class QuizActivity extends AppCompatActivity {
                 for (int j = 0; j < 4; j++) {
                     options[j] = optionsArray.getString(j);
                 }
-                int correctAnswer = obj.getInt("answer");
-                questionList.add(new Question(title != null ? title : "AI Quiz", question, options, correctAnswer));
+                int difficulty = obj.optInt("difficulty", 2);
+                String type = obj.optString("type", "single");
+                
+                if (type.equals("multiple")) {
+                    // Parse multiple answers
+                    org.json.JSONArray answersArray = obj.getJSONArray("answers");
+                    int[] correctAnswers = new int[answersArray.length()];
+                    for (int j = 0; j < answersArray.length(); j++) {
+                        correctAnswers[j] = answersArray.getInt(j);
+                    }
+                    questionList.add(new Question(title != null ? title : "AI Quiz", question, options, correctAnswers, type, difficulty));
+                } else {
+                    // Single answer (backward compatible)
+                    int correctAnswer = obj.has("answer") ? obj.getInt("answer") : obj.getJSONArray("answers").getInt(0);
+                    questionList.add(new Question(title != null ? title : "AI Quiz", question, options, correctAnswer, difficulty));
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -287,13 +446,31 @@ public class QuizActivity extends AppCompatActivity {
         String category;
         String question;
         String[] options;
-        int correctAnswerIndex;
+        int correctAnswerIndex; // For backward compatibility (single answer)
+        int[] correctAnswers; // For multiple answers
+        String type; // "single" or "multiple"
+        int difficulty; // 1=easy, 2=medium, 3=hard
 
-        Question(String category, String question, String[] options, int correctAnswerIndex) {
+        // Constructor for single answer (backward compatible)
+        Question(String category, String question, String[] options, int correctAnswerIndex, int difficulty) {
             this.category = category;
             this.question = question;
             this.options = options;
             this.correctAnswerIndex = correctAnswerIndex;
+            this.correctAnswers = new int[]{correctAnswerIndex};
+            this.type = "single";
+            this.difficulty = difficulty;
+        }
+
+        // Constructor for multiple answers
+        Question(String category, String question, String[] options, int[] correctAnswers, String type, int difficulty) {
+            this.category = category;
+            this.question = question;
+            this.options = options;
+            this.correctAnswers = correctAnswers;
+            this.correctAnswerIndex = correctAnswers.length > 0 ? correctAnswers[0] : 0;
+            this.type = type;
+            this.difficulty = difficulty;
         }
     }
 }

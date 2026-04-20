@@ -52,6 +52,7 @@ public class QuizResultActivity extends AppCompatActivity {
         else tvEmoji.setText("💪");
 
         btnDone.setOnClickListener(v -> finish());
+        findViewById(R.id.btn_back).setOnClickListener(v -> finish());
 
         String quizData = getIntent().getStringExtra("QUIZ_DATA");
         int[] userAnswers = getIntent().getIntArrayExtra("USER_ANSWERS");

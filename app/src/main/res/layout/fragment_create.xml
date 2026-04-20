@@ -22,6 +22,7 @@
             android:textSize="28sp"
             android:textStyle="bold" />
 
+        <!-- Quiz Title -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -44,6 +45,7 @@
             android:textColorHint="@color/outline_variant"
             android:textSize="14sp" />
 
+        <!-- Content label + buttons -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -61,6 +63,15 @@
                 android:textSize="14sp" />
 
             <ImageButton
+                android:id="@+id/btn_ai_settings"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_manage"
+                app:tint="@color/primary" />
+
+            <ImageButton
                 android:id="@+id/btn_upload_docx"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
@@ -69,53 +80,83 @@
                 app:tint="@color/primary" />
         </LinearLayout>
 
-        <FrameLayout
+        <!-- Content input -->
+        <EditText
+            android:id="@+id/et_content"
             android:layout_width="match_parent"
             android:layout_height="220dp"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="8dp"
+            android:background="@drawable/bg_input_field"
+            android:gravity="top|start"
+            android:hint="@string/content_hint"
+            android:inputType="textMultiLine"
+            android:padding="16dp"
+            android:textColor="@color/on_surface"
+            android:textColorHint="@color/outline_variant"
+            android:textSize="14sp" />
 
-            <EditText
-                android:id="@+id/et_content"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="@drawable/bg_input_field"
-                android:gravity="top|start"
-                android:hint="@string/content_hint"
-                android:inputType="textMultiLine"
-                android:padding="16dp"
-                android:textColor="@color/on_surface"
-                android:textColorHint="@color/outline_variant"
-                android:textSize="14sp" />
+        <!-- Custom Prompt (collapsible chip style) -->
+        <LinearLayout
+            android:id="@+id/btn_toggle_prompt"
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_chip_selector"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="14dp"
+            android:clickable="true"
+            android:focusable="true">
 
-            <LinearLayout
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_margin="12dp"
+                android:text="✦ Custom Prompt"
+                android:textColor="@color/primary"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tv_prompt_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="6dp"
+                android:text="▾"
+                android:textColor="@color/primary"
+                android:textSize="14sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ll_prompt_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Ghi đè prompt mặc định. Đặt {source} để chèn nội dung văn bản."
+                android:textColor="@color/on_surface_secondary"
+                android:textSize="12sp" />
+
+            <EditText
+                android:id="@+id/et_custom_prompt"
+                android:layout_width="match_parent"
+                android:layout_height="120dp"
+                android:layout_marginTop="8dp"
                 android:background="@drawable/bg_input_field"
-                android:backgroundTint="#F3F4F6"
-                android:gravity="center"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="4dp">
+                android:gravity="top|start"
+                android:hint="Ví dụ: Tạo {quantity} câu hỏi từ nội dung sau: {source}"
+                android:inputType="textMultiLine"
+                android:padding="14dp"
+                android:textColor="@color/on_surface"
+                android:textColorHint="@color/outline_variant"
+                android:textSize="13sp" />
+        </LinearLayout>
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="T "
-                    android:textColor="@color/on_surface_variant"
-                    android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/tv_word_count"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="0 words"
-                    android:textColor="@color/on_surface_variant"
-                    android:textSize="12sp" />
-            </LinearLayout>
-        </FrameLayout>
-
+        <!-- Number of questions -->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -129,6 +170,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:gravity="center_vertical"
             android:orientation="horizontal">
 
             <Button
@@ -173,78 +215,30 @@
                 android:textSize="14sp"
                 android:textAllCaps="false" />
 
-            <Button
-                android:id="@+id/btn_q20"
+            <!-- Custom number input -->
+            <EditText
+                android:id="@+id/et_custom_quantity"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
                 android:layout_marginStart="6dp"
-                android:background="@drawable/bg_chip_selector"
-                app:backgroundTint="@null"
-                android:stateListAnimator="@null"
-                android:text="20"
-                android:textColor="@color/color_chip_text"
-                android:textSize="14sp"
-                android:textAllCaps="false" />
+                android:background="@drawable/bg_input_field"
+                android:gravity="center"
+                android:hint="Tự nhập"
+                android:inputType="number"
+                android:maxLength="2"
+                android:textColor="@color/on_surface"
+                android:textColorHint="@color/outline_variant"
+                android:textSize="13sp" />
         </LinearLayout>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:text="@string/difficulty_label"
-            android:textStyle="bold"
-            android:textColor="@color/on_surface_variant"
-            android:textSize="14sp" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btn_easy"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginEnd="6dp"
-                android:background="@drawable/bg_chip_selector_green"
-                app:backgroundTint="@null"
-                android:stateListAnimator="@null"
-                android:text="@string/difficulty_easy"
-                android:textColor="@color/color_chip_text"
-                android:textSize="14sp"
-                android:textAllCaps="false" />
-
-            <Button
-                android:id="@+id/btn_medium"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginHorizontal="6dp"
-                android:background="@drawable/bg_chip_selector_orange"
-                app:backgroundTint="@null"
-                android:stateListAnimator="@null"
-                android:text="@string/difficulty_medium"
-                android:textColor="@color/color_chip_text"
-                android:textSize="14sp"
-                android:textAllCaps="false" />
-
-            <Button
-                android:id="@+id/btn_hard"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:layout_marginStart="6dp"
-                android:background="@drawable/bg_chip_selector_red"
-                app:backgroundTint="@null"
-                android:stateListAnimator="@null"
-                android:text="@string/difficulty_hard"
-                android:textColor="@color/color_chip_text"
-                android:textSize="14sp"
-                android:textAllCaps="false" />
-        </LinearLayout>
+            android:layout_marginTop="4dp"
+            android:text="Tối đa 20 câu"
+            android:textColor="@color/on_surface_secondary"
+            android:textSize="11sp" />
 
         <Button
             android:id="@+id/btn_generate_quiz"

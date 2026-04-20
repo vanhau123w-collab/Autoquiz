@@ -32,6 +32,7 @@
         <activity android:name=".quiz.QuizResultActivity" android:exported="false" />
         <activity android:name=".quiz.ReviewActivity" android:exported="false" />
         <activity android:name=".main.EditProfileActivity" />
+        <activity android:name=".main.AISettingsActivity" android:exported="false" />
 
     </application>
 
