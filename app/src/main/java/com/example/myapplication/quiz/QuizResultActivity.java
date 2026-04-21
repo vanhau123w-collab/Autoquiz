@@ -31,11 +31,32 @@ public class QuizResultActivity extends AppCompatActivity {
         Button btnDone = findViewById(R.id.btn_done);
 
         int quizId = getIntent().getIntExtra("QUIZ_ID", -1);
-        
         saveResultToDatabase(quizId, correct, total, timeMillis);
 
         tvScore.setText(correct + "/" + total);
         
+        // Detailed stats
+        int easyCount = getIntent().getIntExtra("EASY_COUNT", 0);
+        int medCount = getIntent().getIntExtra("MEDIUM_COUNT", 0);
+        int hardCount = getIntent().getIntExtra("HARD_COUNT", 0);
+        int easyCorrect = getIntent().getIntExtra("EASY_CORRECT", 0);
+        int medCorrect = getIntent().getIntExtra("MEDIUM_CORRECT", 0);
+        int hardCorrect = getIntent().getIntExtra("HARD_CORRECT", 0);
+
+        ((TextView) findViewById(R.id.tv_stat_total)).setText(String.valueOf(total));
+        ((TextView) findViewById(R.id.tv_stat_easy)).setText(easyCorrect + "/" + easyCount);
+        ((TextView) findViewById(R.id.tv_stat_medium)).setText(medCorrect + "/" + medCount);
+        ((TextView) findViewById(R.id.tv_stat_hard)).setText(hardCorrect + "/" + hardCount);
+
+        // Understanding % calculation (Weighted score)
+        // Easy=1, Med=2, Hard=3
+        int maxPoints = (easyCount * 1) + (medCount * 2) + (hardCount * 3);
+        int earnedPoints = (easyCorrect * 1) + (medCorrect * 2) + (hardCorrect * 3);
+        int understanding = (maxPoints > 0) ? (earnedPoints * 100 / maxPoints) : 0;
+        
+        TextView tvUnderstanding = findViewById(R.id.tv_result_understanding);
+        tvUnderstanding.setText(understanding + "%");
+
         // Calculate accuracy
         int accuracy = (total > 0) ? (correct * 100 / total) : 0;
         tvAccuracy.setText(accuracy + "%");
@@ -101,10 +122,13 @@ public class QuizResultActivity extends AppCompatActivity {
     private void saveResultToDatabase(int quizId, int correct, int total, long timeSpent) {
         if (quizId == -1) return;
         
+        android.content.SharedPreferences prefs = getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE);
+        String email = prefs.getString("CurrentUserEmail", "");
+
         new Thread(() -> {
             try {
                 com.example.myapplication.data.QuizResult result = new com.example.myapplication.data.QuizResult(
-                    quizId, correct, total, timeSpent, System.currentTimeMillis()
+                    quizId, correct, total, timeSpent, System.currentTimeMillis(), email
                 );
                 com.example.myapplication.data.AppDatabase.getInstance(this).quizDao().insertResult(result);
             } catch (Exception e) {

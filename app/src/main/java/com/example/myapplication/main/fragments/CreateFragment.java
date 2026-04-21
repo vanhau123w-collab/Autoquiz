@@ -158,9 +158,17 @@ public class CreateFragment extends Fragment {
         btnGenerateQuiz.setEnabled(false);
         btnGenerateQuiz.setText("AI đang soạn câu hỏi...");
 
-        // Lấy key: ưu tiên key từ manager, fallback về BuildConfig
+        // Lấy key: ưu tiên trong app, nếu không có lấy ở local.properties (BuildConfig)
         String apiKey = aiModelManager.nextKey(AIModelManager.PROVIDER_GEMINI);
-        if (apiKey == null || apiKey.isEmpty()) apiKey = BuildConfig.GEMINI_API_KEY;
+        if (apiKey == null || apiKey.isEmpty()) {
+            apiKey = BuildConfig.GEMINI_API_KEY;
+        }
+
+        if (apiKey == null || apiKey.isEmpty()) {
+            Toast.makeText(getContext(), "Chưa có API key Gemini. Hãy vào Cài đặt AI để thêm.", Toast.LENGTH_LONG).show();
+            resetBtn();
+            return;
+        }
         final String finalApiKey = apiKey;
 
         OkHttpClient client = new OkHttpClient.Builder()
@@ -186,10 +194,14 @@ public class CreateFragment extends Fragment {
             RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
             String url = "https://generativelanguage.googleapis.com/v1beta/models/" + modelId + ":generateContent?key=" + finalApiKey;
 
-            Request request = new Request.Builder().url(url).post(body).build();
-            Log.d("GeminiAPI", "Gửi request tới: " + url);
+            Log.d("GeminiAPI", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            Log.d("GeminiAPI", "Provider : " + AIModelManager.PROVIDER_GEMINI);
+            Log.d("GeminiAPI", "Model ID : " + modelId);
+            Log.d("GeminiAPI", "URL      : " + url);
+            Log.d("GeminiAPI", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             Log.d("GeminiAPI", "Prompt length: " + prompt.length() + " chars");
 
+            Request request = new Request.Builder().url(url).post(body).build();
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -250,8 +262,19 @@ public class CreateFragment extends Fragment {
     private void callOpenAICompatible(String sourceContent, String quantity,
                                        String finalTitle, String provider, String model) {
         String apiKey = aiModelManager.nextKey(provider);
+        
+        // Fallback về local.properties (BuildConfig) nếu trong app trống
         if (apiKey == null || apiKey.isEmpty()) {
-            Toast.makeText(getContext(), "Chưa có API key cho " + provider + ". Vào AI Settings để thêm.", Toast.LENGTH_LONG).show();
+            if (provider.equals(AIModelManager.PROVIDER_GROQ)) {
+                apiKey = BuildConfig.GROQ_API_KEY;
+            } else if (provider.equals(AIModelManager.PROVIDER_OPENROUTER)) {
+                apiKey = BuildConfig.OPENROUTER_API_KEY;
+            }
+        }
+
+        if (apiKey == null || apiKey.isEmpty()) {
+            Toast.makeText(getContext(), "Chưa có API key cho " + provider + ". Hãy vào Cài đặt AI để thêm.", Toast.LENGTH_LONG).show();
+            resetBtn();
             return;
         }
         btnGenerateQuiz.setEnabled(false);
@@ -351,15 +374,15 @@ public class CreateFragment extends Fragment {
         }
         return "Tạo " + quantity + " câu hỏi trắc nghiệm từ văn bản sau. Yêu cầu:\n" +
                "1. CHỈ dựa vào nội dung văn bản, KHÔNG dùng kiến thức bên ngoài\n" +
-               "2. Độ khó tăng dần: câu đầu dễ (1), giữa trung bình (2), cuối khó (3)\n" +
-               "3. Mỗi câu có 4 đáp án\n" +
+               "2. Phải chia bộ câu hỏi thành 3 mức độ: Dễ (1), Trung bình (2), Khó (3). Tỷ lệ khoảng 30% dễ, 40% trung bình, 30% khó.\n" +
+               "3. Mỗi câu có đúng 4 đáp án\n" +
                "4. Có 2 loại: \"single\" (1 đáp án đúng) và \"multiple\" (nhiều đáp án đúng)\n" +
                "5. Khoảng 70% câu single, 30% câu multiple\n" +
                "6. Trả lời bằng tiếng Việt\n" +
-               "7. Trả về JSON array thuần, KHÔNG có markdown\n\n" +
+               "7. Trả về JSON array thuần, KHÔNG có markdown, không giải thích\n\n" +
                "Văn bản:\n" + sourceContent + "\n\n" +
-               "Format: [{\"question\":\"...\",\"options\":[\"A\",\"B\",\"C\",\"D\"],\"type\":\"single\",\"answers\":[0],\"difficulty\":1}]\n" +
-               "Với type=\"multiple\", answers có thể là [0,2] hoặc [1,2,3] tùy số đáp án đúng";
+               "Format JSON: [{\"question\":\"...\",\"options\":[\"A\",\"B\",\"C\",\"D\"],\"type\":\"single\",\"answers\":[0],\"difficulty\":1}]\n" +
+               "Lưu ý: \"difficulty\" phải là số 1, 2 hoặc 3. \"answers\" luôn là mảng các số (index đáp án từ 0-3).";
     }
 
     private void handleAIText(String aiText, String finalTitle, String quantity) {
@@ -434,7 +457,10 @@ public class CreateFragment extends Fragment {
         if(getActivity() == null) return;
         try {
             // Lưu vào Room Database
-            Quiz newQuiz = new Quiz(title, new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date()), count, aiData);
+            SharedPreferences sharedPref = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+            String email = sharedPref.getString("CurrentUserEmail", "");
+            
+            Quiz newQuiz = new Quiz(title, new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date()), count, aiData, email);
             AppDatabase.getInstance(getContext()).quizDao().insert(newQuiz);
             
             // Auto switch to library tab

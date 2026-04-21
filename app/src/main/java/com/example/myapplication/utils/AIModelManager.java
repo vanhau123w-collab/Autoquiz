@@ -17,78 +17,37 @@ public class AIModelManager {
     public static final String[] MODELS_GEMINI_DISPLAY = {
         "Gemini-3.1-Flash-Lite-Preview",
         "Gemini-3-Flash-Preview",
-        "Gemini-3.1-Pro-Preview",
-        "Gemini-2.5-Pro",
-        "Gemini-2.5-Flash",
         "Gemini-2.5-Flash-Lite",
-        "Gemini-2.5-Computer-Use-Preview-10-2025",
-        "Gemini-2.0-Flash",
-        "Gemini-2.0-Flash-Lite",
         "Gemma-3-27b-It"
     };
     // Gemini model IDs thực tế gọi API (tương ứng theo index)
     public static final String[] MODELS_GEMINI_IDS = {
         "gemini-3.1-flash-lite-preview",
         "gemini-3-flash-preview",
-        "gemini-3.1-pro-preview",
-        "gemini-2.5-pro",
-        "gemini-2.5-flash",
         "gemini-2.5-flash-lite",
-        "gemini-2.5-computer-use-preview-10-2025",
-        "gemini-2.0-flash",
-        "gemini-2.0-flash-lite",
         "gemma-3-27b-it"
     };
 
     // Groq
     public static final String[] MODELS_GROQ = {
-        "llama3-8b-8192",
         "llama-3.3-70b-versatile",
-        "mixtral-8x7b-32768",
         "llama-3.1-8b-instant",
         "meta-llama/llama-4-scout-17b-16e-instruct",
-        "meta-llama/llama-prompt-guard-2-22m",
-        "meta-llama/llama-prompt-guard-2-86m",
         "openai/gpt-oss-120b",
         "openai/gpt-oss-20b",
         "openai/gpt-oss-safeguard-20b",
         "qwen/qwen3-32b",
-        "groq/compound",
         "groq/compound-mini",
-        "allam-2-7b",
-        "canopylabs/orpheus-arabic-saudi",
-        "canopylabs/orpheus-v1-english"
     };
     // OpenRouter
     public static final String[] MODELS_OPENROUTER = {
-        "google/gemma-4-26b-a4b-it:free",
-        "google/gemma-4-31b-it:free",
-        "nvidia/nemotron-3-super-120b-a12b:free",
-        "minimax/minimax-m2.5:free",
         "openrouter/auto:free",
         "arcee-ai/trinity-large-preview:free",
-        "liquid/lfm-2.5-1.2b-thinking:free",
-        "liquid/lfm-2.5-1.2b-instruct:free",
-        "nvidia/nemotron-3-nano-30b-a3b:free",
-        "nvidia/nemotron-nano-12b-v2-v1:free",
-        "qwen/qwen3-next-80b-a3b-instruct:free",
-        "nvidia/nemotron-nano-9b-v2:free",
         "openai/gpt-oss-120b:free",
         "openai/gpt-oss-20b:free",
-        "z-ai/glm-4.5-air:free",
-        "qwen/qwen3-coder:free",
-        "cognitivecomputations/dolphin-mistral-24b-venice-edition:free",
         "google/gemma-3n-e2b-it:free",
         "google/gemma-3n-e4b-it:free",
         "google/gemma-3-4b-it:free",
-        "google/gemma-3-12b-it:free",
-        "google/gemma-3-27b-it:free",
-        "meta-llama/llama-3.3-70b-instruct:free",
-        "meta-llama/llama-3.2-3b-instruct:free",
-        "nousresearch/hermes-3-llama-3.1-405b:free",
-        "meta-llama/llama-3.1-8b-instruct:free",
-        "mistralai/mistral-7b-instruct:free",
-        "google/gemma-2-9b-it:free"
     };
 
     private static final String PREFS_NAME         = "ai_model_prefs";
@@ -131,7 +90,7 @@ public class AIModelManager {
             for (String id : MODELS_GEMINI_IDS) {
                 if (id.equals(displayName)) return displayName;
             }
-            return MODELS_GEMINI_IDS[4]; // fallback: gemini-2.5-flash
+            return MODELS_GEMINI_IDS[0]; // fallback: gemini-3.1-flash-lite-preview
         }
         return displayName;
     }
@@ -146,7 +105,7 @@ public class AIModelManager {
     }
 
     public String getSelectedModel() {
-        String saved = prefs.getString(KEY_MODEL, MODELS_GEMINI_IDS[4]); // default: gemini-2.5-flash
+        String saved = prefs.getString(KEY_MODEL, MODELS_GEMINI_IDS[0]); // default: gemini-3.1-flash-lite-preview
         // Migration: nếu saved là display name cũ hoặc ID không hợp lệ → reset
         String provider = getSelectedProvider();
         if (PROVIDER_GEMINI.equals(provider)) {
@@ -157,7 +116,7 @@ public class AIModelManager {
                 if (display.equals(saved)) return saved;
             }
             // Không tìm thấy → reset về default
-            String def = MODELS_GEMINI_DISPLAY[4]; // "Gemini-2.5-Flash"
+            String def = MODELS_GEMINI_DISPLAY[0]; // "Gemini-3.1-Flash-Lite-Preview"
             prefs.edit().putString(KEY_MODEL, def).apply();
             return def;
         }

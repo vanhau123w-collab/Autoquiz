@@ -18,11 +18,19 @@ public class SplashActivity extends AppCompatActivity {
 
         animateDots();
 
-        // Wait for 3 seconds then transition to Login
+        // Check login status
+        android.content.SharedPreferences sharedPref = getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE);
+        String email = sharedPref.getString("CurrentUserEmail", null);
+
+        // Wait for 2 seconds (reduced from 3) then transition
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+            if (email != null && !email.isEmpty()) {
+                startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            } else {
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+            }
             finish();
-        }, 3000);
+        }, 2000);
     }
 
     private void animateDots() {

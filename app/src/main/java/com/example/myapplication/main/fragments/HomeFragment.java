@@ -80,13 +80,13 @@ public class HomeFragment extends Fragment {
         // 2. Load Quiz Data and Stats from Room
         try {
             com.example.myapplication.data.QuizDao quizDao = AppDatabase.getInstance(getContext()).quizDao();
-            List<Quiz> quizList = quizDao.getAllQuizzes();
-            List<com.example.myapplication.data.QuizResult> results = quizDao.getAllResults();
+            List<Quiz> quizList = quizDao.getAllQuizzes(email);
+            List<com.example.myapplication.data.QuizResult> results = quizDao.getAllResults(email);
             
             // Stats from QuizResult
             int quizLibraryCount = quizList.size();
-            double avgAccuracy = quizDao.getAverageAccuracy();
-            long avgTimeMillis = quizDao.getAverageTimeSpent();
+            double avgAccuracy = quizDao.getAverageAccuracy(email);
+            long avgTimeMillis = quizDao.getAverageTimeSpent(email);
 
             tvQuizCount.setText(String.valueOf(quizLibraryCount));
             tvAccuracy.setText(String.format(Locale.getDefault(), "%.0f%%", avgAccuracy));
@@ -157,6 +157,16 @@ public class HomeFragment extends Fragment {
         }
         count.setText(getString(R.string.questions_count_format, countInt));
         
+        // Hiển thị Best Score thực tế thay vì mock progress
+        Double bestScore = AppDatabase.getInstance(getContext()).quizDao().getBestScoreForQuiz(quiz.getId());
+        if (bestScore != null) {
+            progress.setProgress(bestScore.intValue());
+            percent.setText(String.format(Locale.getDefault(), "%.0f%%", bestScore));
+        } else {
+            progress.setProgress(0);
+            percent.setText("0%");
+        }
+        
         card.setOnClickListener(v -> {
             Intent intent = new Intent(getActivity(), QuizActivity.class);
             intent.putExtra("QUIZ_ID", quiz.getId());
@@ -164,10 +174,6 @@ public class HomeFragment extends Fragment {
             intent.putExtra("QUIZ_TITLE", quiz.getTitle());
             startActivity(intent);
         });
-
-        int p = (int) (Math.random() * 100);
-        progress.setProgress(p);
-        percent.setText(p + "%");
 
         recentlyAddedContainer.addView(card);
     }

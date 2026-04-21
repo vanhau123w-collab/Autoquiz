@@ -83,7 +83,7 @@ public class SettingsFragment extends Fragment {
         // Load Streak Data
         try {
             com.example.myapplication.data.QuizDao quizDao = AppDatabase.getInstance(getContext()).quizDao();
-            java.util.List<com.example.myapplication.data.QuizResult> results = quizDao.getAllResults();
+            java.util.List<com.example.myapplication.data.QuizResult> results = quizDao.getAllResults(email);
 
             int streak = com.example.myapplication.utils.StreakUtils.calculateCurrentStreak(results);
             tvStreakCount.setText(String.valueOf(streak));

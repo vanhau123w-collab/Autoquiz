@@ -80,7 +80,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:fillViewport="true"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="32dp"
         app:layout_constraintBottom_toTopOf="@id/bottomActionBar"
         app:layout_constraintTop_toBottomOf="@id/quiz_progress_bar">
 
@@ -95,7 +95,7 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="32dp"
                 app:cardCornerRadius="28dp"
                 app:cardElevation="12dp"
                 app:cardBackgroundColor="@color/white"
