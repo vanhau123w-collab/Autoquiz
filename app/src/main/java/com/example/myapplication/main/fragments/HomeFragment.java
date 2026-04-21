@@ -80,13 +80,13 @@ public class HomeFragment extends Fragment {
         // 2. Load Quiz Data and Stats from Room
         try {
             com.example.myapplication.data.QuizDao quizDao = AppDatabase.getInstance(getContext()).quizDao();
-            List<Quiz> quizList = quizDao.getAllQuizzes();
-            List<com.example.myapplication.data.QuizResult> results = quizDao.getAllResults();
+            List<Quiz> quizList = quizDao.getAllQuizzes(email);
+            List<com.example.myapplication.data.QuizResult> results = quizDao.getAllResults(email);
             
             // Stats from QuizResult
             int quizLibraryCount = quizList.size();
-            double avgAccuracy = quizDao.getAverageAccuracy();
-            long avgTimeMillis = quizDao.getAverageTimeSpent();
+            double avgAccuracy = quizDao.getAverageAccuracy(email);
+            long avgTimeMillis = quizDao.getAverageTimeSpent(email);
 
             tvQuizCount.setText(String.valueOf(quizLibraryCount));
             tvAccuracy.setText(String.format(Locale.getDefault(), "%.0f%%", avgAccuracy));

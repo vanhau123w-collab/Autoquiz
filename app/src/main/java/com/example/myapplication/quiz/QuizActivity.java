@@ -180,10 +180,19 @@ public class QuizActivity extends AppCompatActivity {
 
     private void finishQuiz() {
         int correctCount = 0;
+        int easyCount = 0, mediumCount = 0, hardCount = 0;
+        int easyCorrect = 0, mediumCorrect = 0, hardCorrect = 0;
+
         for (int i = 0; i < questionList.size(); i++) {
             Question q = questionList.get(i);
+            boolean isCorrect = false;
+
+            // Count total per difficulty
+            if (q.difficulty == 1) easyCount++;
+            else if (q.difficulty == 3) hardCount++;
+            else mediumCount++;
+
             if (q.type.equals("multiple")) {
-                // Check if all correct answers are selected and no wrong ones
                 List<Integer> userAns = userMultiAnswers[i];
                 if (userAns.size() == q.correctAnswers.length) {
                     boolean allCorrect = true;
@@ -193,29 +202,37 @@ public class QuizActivity extends AppCompatActivity {
                             break;
                         }
                     }
-                    if (allCorrect) correctCount++;
+                    if (allCorrect) isCorrect = true;
                 }
             } else {
                 if (userAnswers[i] == q.correctAnswerIndex) {
-                    correctCount++;
+                    isCorrect = true;
                 }
+            }
+
+            if (isCorrect) {
+                correctCount++;
+                if (q.difficulty == 1) easyCorrect++;
+                else if (q.difficulty == 3) hardCorrect++;
+                else mediumCorrect++;
             }
         }
 
         long timeSpent = System.currentTimeMillis() - startTime;
-        
-        // Save to Database only if it's a real quiz (not mock)
-        if (quizId != -1) {
-            com.example.myapplication.data.QuizResult result = new com.example.myapplication.data.QuizResult(
-                    quizId, correctCount, questionList.size(), timeSpent, System.currentTimeMillis()
-            );
-            com.example.myapplication.data.AppDatabase.getInstance(this).quizDao().insertResult(result);
-        }
 
         // Start QuizResultActivity
         Intent intent = new Intent(this, QuizResultActivity.class);
         intent.putExtra("CORRECT_ANSWERS", correctCount);
         intent.putExtra("TOTAL_QUESTIONS", questionList.size());
+        
+        // Passing detailed stats
+        intent.putExtra("EASY_COUNT", easyCount);
+        intent.putExtra("MEDIUM_COUNT", mediumCount);
+        intent.putExtra("HARD_COUNT", hardCount);
+        intent.putExtra("EASY_CORRECT", easyCorrect);
+        intent.putExtra("MEDIUM_CORRECT", mediumCorrect);
+        intent.putExtra("HARD_CORRECT", hardCorrect);
+
         intent.putExtra("TIME_SPENT", timeSpent);
         intent.putExtra("QUIZ_DATA", currentQuizJson); 
         intent.putExtra("USER_ANSWERS", userAnswers);

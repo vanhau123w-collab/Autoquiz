@@ -15,29 +15,23 @@ public class AIModelManager {
 
     // Gemini model display names (hiển thị trên UI)
     public static final String[] MODELS_GEMINI_DISPLAY = {
-        "Gemini-3.1-Flash-Lite-Preview",
-        "Gemini-3-Flash-Preview",
-        "Gemini-3.1-Pro-Preview",
-        "Gemini-2.5-Pro",
-        "Gemini-2.5-Flash",
-        "Gemini-2.5-Flash-Lite",
-        "Gemini-2.5-Computer-Use-Preview-10-2025",
         "Gemini-2.0-Flash",
-        "Gemini-2.0-Flash-Lite",
-        "Gemma-3-27b-It"
+        "Gemini-2.0-Flash-Lite-Preview",
+        "Gemini-1.5-Flash",
+        "Gemini-1.5-Flash-8b",
+        "Gemini-1.5-Pro",
+        "Gemma-2-27b-It",
+        "Gemma-2-9b-It"
     };
     // Gemini model IDs thực tế gọi API (tương ứng theo index)
     public static final String[] MODELS_GEMINI_IDS = {
-        "gemini-3.1-flash-lite-preview",
-        "gemini-3-flash-preview",
-        "gemini-3.1-pro-preview",
-        "gemini-2.5-pro",
-        "gemini-2.5-flash",
-        "gemini-2.5-flash-lite",
-        "gemini-2.5-computer-use-preview-10-2025",
         "gemini-2.0-flash",
-        "gemini-2.0-flash-lite",
-        "gemma-3-27b-it"
+        "gemini-2.0-flash-lite-preview-02-05",
+        "gemini-1.5-flash",
+        "gemini-1.5-flash-8b",
+        "gemini-1.5-pro",
+        "gemma-2-27b-it",
+        "gemma-2-9b-it"
     };
 
     // Groq

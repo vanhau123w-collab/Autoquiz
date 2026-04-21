@@ -87,7 +87,12 @@
     <!-- Results -->
     <string name="correct_answers">Số câu đúng</string>
     <string name="time_label">Thời gian</string>
-    <string name="accuracy_label">Độ chính xác</string>
+    <string name="accuracy_label">Chính xác</string>
+    <string name="total_questions_label">Tổng số câu</string>
+    <string name="easy_questions_label">Câu dễ</string>
+    <string name="medium_questions_label">Câu trung bình</string>
+    <string name="hard_questions_label">Câu khó</string>
+    <string name="understanding_label">Thông hiểu</string>
     <string name="btn_done">Xong</string>
     <string name="review_quiz">Xem lại đáp án</string>
     <string name="retry_wrong">Làm lại câu sai</string>

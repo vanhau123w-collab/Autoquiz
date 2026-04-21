@@ -17,14 +17,16 @@ public class QuizResult {
     private int correctAnswers;
     private int totalQuestions;
     private long timeSpentMillis;
+    private String userEmail;
     private long timestamp;
 
-    public QuizResult(int quizId, int correctAnswers, int totalQuestions, long timeSpentMillis, long timestamp) {
+    public QuizResult(int quizId, int correctAnswers, int totalQuestions, long timeSpentMillis, long timestamp, String userEmail) {
         this.quizId = quizId;
         this.correctAnswers = correctAnswers;
         this.totalQuestions = totalQuestions;
         this.timeSpentMillis = timeSpentMillis;
         this.timestamp = timestamp;
+        this.userEmail = userEmail;
     }
 
     public int getId() { return id; }
@@ -44,4 +46,7 @@ public class QuizResult {
 
     public long getTimestamp() { return timestamp; }
     public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
+
+    public String getUserEmail() { return userEmail; }
+    public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
 }

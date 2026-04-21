@@ -351,15 +351,15 @@ public class CreateFragment extends Fragment {
         }
         return "Tạo " + quantity + " câu hỏi trắc nghiệm từ văn bản sau. Yêu cầu:\n" +
                "1. CHỈ dựa vào nội dung văn bản, KHÔNG dùng kiến thức bên ngoài\n" +
-               "2. Độ khó tăng dần: câu đầu dễ (1), giữa trung bình (2), cuối khó (3)\n" +
-               "3. Mỗi câu có 4 đáp án\n" +
+               "2. Phải chia bộ câu hỏi thành 3 mức độ: Dễ (1), Trung bình (2), Khó (3). Tỷ lệ khoảng 30% dễ, 40% trung bình, 30% khó.\n" +
+               "3. Mỗi câu có đúng 4 đáp án\n" +
                "4. Có 2 loại: \"single\" (1 đáp án đúng) và \"multiple\" (nhiều đáp án đúng)\n" +
                "5. Khoảng 70% câu single, 30% câu multiple\n" +
                "6. Trả lời bằng tiếng Việt\n" +
-               "7. Trả về JSON array thuần, KHÔNG có markdown\n\n" +
+               "7. Trả về JSON array thuần, KHÔNG có markdown, không giải thích\n\n" +
                "Văn bản:\n" + sourceContent + "\n\n" +
-               "Format: [{\"question\":\"...\",\"options\":[\"A\",\"B\",\"C\",\"D\"],\"type\":\"single\",\"answers\":[0],\"difficulty\":1}]\n" +
-               "Với type=\"multiple\", answers có thể là [0,2] hoặc [1,2,3] tùy số đáp án đúng";
+               "Format JSON: [{\"question\":\"...\",\"options\":[\"A\",\"B\",\"C\",\"D\"],\"type\":\"single\",\"answers\":[0],\"difficulty\":1}]\n" +
+               "Lưu ý: \"difficulty\" phải là số 1, 2 hoặc 3. \"answers\" luôn là mảng các số (index đáp án từ 0-3).";
     }
 
     private void handleAIText(String aiText, String finalTitle, String quantity) {
@@ -434,7 +434,10 @@ public class CreateFragment extends Fragment {
         if(getActivity() == null) return;
         try {
             // Lưu vào Room Database
-            Quiz newQuiz = new Quiz(title, new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date()), count, aiData);
+            SharedPreferences sharedPref = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+            String email = sharedPref.getString("CurrentUserEmail", "");
+            
+            Quiz newQuiz = new Quiz(title, new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date()), count, aiData, email);
             AppDatabase.getInstance(getContext()).quizDao().insert(newQuiz);
             
             // Auto switch to library tab

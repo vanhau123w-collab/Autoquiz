@@ -89,6 +89,11 @@
     <string name="correct_answers">Correct Answers</string>
     <string name="time_label">Time</string>
     <string name="accuracy_label">Accuracy</string>
+    <string name="total_questions_label">Total Questions</string>
+    <string name="easy_questions_label">Easy Questions</string>
+    <string name="medium_questions_label">Medium Questions</string>
+    <string name="hard_questions_label">Hard Questions</string>
+    <string name="understanding_label">Understanding</string>
     <string name="btn_done">Done</string>
     <string name="review_quiz">Review Answers</string>
     <string name="retry_wrong">Retry Wrong Questions</string>

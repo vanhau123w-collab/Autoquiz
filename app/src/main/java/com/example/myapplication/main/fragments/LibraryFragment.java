@@ -34,17 +34,18 @@ public class LibraryFragment extends Fragment {
         quizListContainer = view.findViewById(R.id.library_container);
 
         loadQuizzes();
-
         return view;
     }
 
     private void loadQuizzes() {
         if (getContext() == null || quizListContainer == null) return;
-        
         quizListContainer.removeAllViews();
         
         try {
-            List<Quiz> quizList = AppDatabase.getInstance(getContext()).quizDao().getAllQuizzes();
+            android.content.SharedPreferences sharedPref = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+            String email = sharedPref.getString("CurrentUserEmail", "");
+            
+            List<Quiz> quizList = AppDatabase.getInstance(getContext()).quizDao().getAllQuizzes(email);
             int count = quizList.size();
 
             if (count == 0) {
