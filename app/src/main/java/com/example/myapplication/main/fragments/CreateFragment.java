@@ -136,7 +136,7 @@ public class CreateFragment extends Fragment {
         String modelId     = AIModelManager.toApiModelId(provider, displayName);
         String baseUrl     = AIModelManager.getBaseUrl(provider);
         String fullUrl     = provider.equals(AIModelManager.PROVIDER_GEMINI)
-                ? "https://generativelanguage.googleapis.com/v1/models/" + modelId + ":generateContent"
+                ? "https://generativelanguage.googleapis.com/v1beta/models/" + modelId + ":generateContent"
                 : baseUrl;
         Log.d("GeminiAPI", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         Log.d("GeminiAPI", "Provider : " + provider);
@@ -184,7 +184,7 @@ public class CreateFragment extends Fragment {
             jsonBody.put("contents", contents);
 
             RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
-            String url = "https://generativelanguage.googleapis.com/v1/models/" + modelId + ":generateContent?key=" + finalApiKey;
+            String url = "https://generativelanguage.googleapis.com/v1beta/models/" + modelId + ":generateContent?key=" + finalApiKey;
 
             Request request = new Request.Builder().url(url).post(body).build();
             Log.d("GeminiAPI", "Gửi request tới: " + url);
