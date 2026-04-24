@@ -32,9 +32,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-import com.tomroush.pdfbox.android.PDFBoxConfig;
-import com.tomroush.pdfbox.pdmodel.PDDocument;
-import com.tomroush.pdfbox.text.PDFTextStripper;
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 
 
 import com.example.myapplication.R;
@@ -95,7 +94,7 @@ public class CreateFragment extends Fragment {
         view.findViewById(R.id.btn_upload_pdf).setOnClickListener(v ->
             getPdf.launch(new String[]{"application/pdf"}));
 
-        PDFBoxConfig.init(requireContext());
+        // PDFBoxConfig.init removed as iTextG doesn't need static init
 
         btnQ5  = view.findViewById(R.id.btn_q5);
         btnQ10 = view.findViewById(R.id.btn_q10);
@@ -431,13 +430,18 @@ public class CreateFragment extends Fragment {
             if (getContext() == null) return;
             InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
             if (inputStream != null) {
-                PDDocument document = PDDocument.load(inputStream);
-                PDFTextStripper stripper = new PDFTextStripper();
-                String text = stripper.getText(document);
-                etContent.setText(text);
-                document.close();
+                PdfReader reader = new PdfReader(inputStream);
+                StringBuilder builder = new StringBuilder();
+                int numPages = reader.getNumberOfPages();
+                
+                for (int i = 1; i <= numPages; i++) {
+                    builder.append(PdfTextExtractor.getTextFromPage(reader, i)).append("\n");
+                }
+                
+                etContent.setText(builder.toString());
+                reader.close();
                 inputStream.close();
-                Toast.makeText(getContext(), "Đã tải văn bản từ file PDF!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), "Đã tải văn bản từ file PDF (iTextG)!", Toast.LENGTH_SHORT).show();
             }
         } catch (Exception e) {
             e.printStackTrace();
