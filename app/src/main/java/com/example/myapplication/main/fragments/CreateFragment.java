@@ -27,14 +27,15 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.Result;
-import com.tomroush.pdfbox.android.PDFBoxConfig;
-import com.tomroush.pdfbox.pdmodel.PDDocument;
-import com.tomroush.pdfbox.text.PDFTextStripper;
 import java.io.InputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import com.tomroush.pdfbox.android.PDFBoxConfig;
+import com.tomroush.pdfbox.pdmodel.PDDocument;
+import com.tomroush.pdfbox.text.PDFTextStripper;
+
 
 import com.example.myapplication.R;
 import com.example.myapplication.BuildConfig;
@@ -54,18 +55,14 @@ public class CreateFragment extends Fragment {
 
     private final String GEMINI_API_KEY = BuildConfig.GEMINI_API_KEY;
 
-    private ActivityResultLauncher<String[]> getContent = registerForActivityResult(
+    private ActivityResultLauncher<String[]> getDocx = registerForActivityResult(
             new ActivityResultContracts.OpenDocument(),
-            uri -> {
-                if (uri != null) {
-                    String mimeType = requireContext().getContentResolver().getType(uri);
-                    if (mimeType != null && mimeType.contains("pdf")) {
-                        extractTextFromPdf(uri);
-                    } else {
-                        extractTextFromDocx(uri);
-                    }
-                }
-            }
+            uri -> { if (uri != null) extractTextFromDocx(uri); }
+    );
+
+    private ActivityResultLauncher<String[]> getPdf = registerForActivityResult(
+            new ActivityResultContracts.OpenDocument(),
+            uri -> { if (uri != null) extractTextFromPdf(uri); }
     );
 
     @Nullable
@@ -93,10 +90,10 @@ public class CreateFragment extends Fragment {
             startActivity(new android.content.Intent(getContext(), AISettingsActivity.class)));
 
         view.findViewById(R.id.btn_upload_docx).setOnClickListener(v ->
-            getContent.launch(new String[]{"application/vnd.openxmlformats-officedocument.wordprocessingml.document"}));
+            getDocx.launch(new String[]{"application/vnd.openxmlformats-officedocument.wordprocessingml.document"}));
 
         view.findViewById(R.id.btn_upload_pdf).setOnClickListener(v ->
-            getContent.launch(new String[]{"application/pdf"}));
+            getPdf.launch(new String[]{"application/pdf"}));
 
         PDFBoxConfig.init(requireContext());
 
@@ -153,7 +150,7 @@ public class CreateFragment extends Fragment {
         String modelId     = AIModelManager.toApiModelId(provider, displayName);
         String baseUrl     = AIModelManager.getBaseUrl(provider);
         String fullUrl     = provider.equals(AIModelManager.PROVIDER_GEMINI)
-                ? "https://generativelanguage.googleapis.com/v1beta/models/" + modelId + ":generateContent"
+                ? "https://generativelanguage.googleapis.com/v1/models/" + modelId + ":generateContent"
                 : baseUrl;
         Log.d("GeminiAPI", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         Log.d("GeminiAPI", "Provider : " + provider);
@@ -175,17 +172,9 @@ public class CreateFragment extends Fragment {
         btnGenerateQuiz.setEnabled(false);
         btnGenerateQuiz.setText("AI đang soạn câu hỏi...");
 
-        // Lấy key: ưu tiên trong app, nếu không có lấy ở local.properties (BuildConfig)
+        // Lấy key: ưu tiên key từ manager, fallback về BuildConfig
         String apiKey = aiModelManager.nextKey(AIModelManager.PROVIDER_GEMINI);
-        if (apiKey == null || apiKey.isEmpty()) {
-            apiKey = BuildConfig.GEMINI_API_KEY;
-        }
-
-        if (apiKey == null || apiKey.isEmpty()) {
-            Toast.makeText(getContext(), "Chưa có API key Gemini. Hãy vào Cài đặt AI để thêm.", Toast.LENGTH_LONG).show();
-            resetBtn();
-            return;
-        }
+        if (apiKey == null || apiKey.isEmpty()) apiKey = BuildConfig.GEMINI_API_KEY;
         final String finalApiKey = apiKey;
 
         OkHttpClient client = new OkHttpClient.Builder()
@@ -209,16 +198,12 @@ public class CreateFragment extends Fragment {
             jsonBody.put("contents", contents);
 
             RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
-            String url = "https://generativelanguage.googleapis.com/v1beta/models/" + modelId + ":generateContent?key=" + finalApiKey;
-
-            Log.d("GeminiAPI", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            Log.d("GeminiAPI", "Provider : " + AIModelManager.PROVIDER_GEMINI);
-            Log.d("GeminiAPI", "Model ID : " + modelId);
-            Log.d("GeminiAPI", "URL      : " + url);
-            Log.d("GeminiAPI", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-            Log.d("GeminiAPI", "Prompt length: " + prompt.length() + " chars");
+            String url = "https://generativelanguage.googleapis.com/v1/models/" + modelId + ":generateContent?key=" + finalApiKey;
 
             Request request = new Request.Builder().url(url).post(body).build();
+            Log.d("GeminiAPI", "Gửi request tới: " + url);
+            Log.d("GeminiAPI", "Prompt length: " + prompt.length() + " chars");
+
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -279,19 +264,8 @@ public class CreateFragment extends Fragment {
     private void callOpenAICompatible(String sourceContent, String quantity,
                                        String finalTitle, String provider, String model) {
         String apiKey = aiModelManager.nextKey(provider);
-        
-        // Fallback về local.properties (BuildConfig) nếu trong app trống
         if (apiKey == null || apiKey.isEmpty()) {
-            if (provider.equals(AIModelManager.PROVIDER_GROQ)) {
-                apiKey = BuildConfig.GROQ_API_KEY;
-            } else if (provider.equals(AIModelManager.PROVIDER_OPENROUTER)) {
-                apiKey = BuildConfig.OPENROUTER_API_KEY;
-            }
-        }
-
-        if (apiKey == null || apiKey.isEmpty()) {
-            Toast.makeText(getContext(), "Chưa có API key cho " + provider + ". Hãy vào Cài đặt AI để thêm.", Toast.LENGTH_LONG).show();
-            resetBtn();
+            Toast.makeText(getContext(), "Chưa có API key cho " + provider + ". Vào AI Settings để thêm.", Toast.LENGTH_LONG).show();
             return;
         }
         btnGenerateQuiz.setEnabled(false);
@@ -467,7 +441,7 @@ public class CreateFragment extends Fragment {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(getContext(), "Lỗi khi đọc PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Lỗi khi đọc file PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
     }
 

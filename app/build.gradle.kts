@@ -28,14 +28,10 @@ android {
             localProperties.load(localPropertiesFile.inputStream())
         }
         val apiKey = localProperties.getProperty("GEMINI_API_KEY") ?: "\"\""
-        val groqKey = localProperties.getProperty("GROQ_API_KEY") ?: "\"\""
-        val openrouterKey = localProperties.getProperty("OPENROUTER_API_KEY") ?: "\"\""
         val senderEmail = localProperties.getProperty("SENDER_EMAIL") ?: "\"\""
         val senderPassword = localProperties.getProperty("SENDER_PASSWORD") ?: "\"\""
         
         buildConfigField("String", "GEMINI_API_KEY", apiKey)
-        buildConfigField("String", "GROQ_API_KEY", groqKey)
-        buildConfigField("String", "OPENROUTER_API_KEY", openrouterKey)
         buildConfigField("String", "SENDER_EMAIL", senderEmail)
         buildConfigField("String", "SENDER_PASSWORD", senderPassword)
     }
@@ -73,7 +69,7 @@ dependencies {
     
     // Thư viện đọc file .docx siêu nhẹ
     implementation("org.zwobble.mammoth:mammoth:1.5.0")
-
+    
     // Thư viện đọc file PDF
     implementation("com.tom-roush:pdfbox-android:2.0.27.0")
 
