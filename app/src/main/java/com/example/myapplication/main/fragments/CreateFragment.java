@@ -153,7 +153,7 @@ public class CreateFragment extends Fragment {
         String modelId     = AIModelManager.toApiModelId(provider, displayName);
         String baseUrl     = AIModelManager.getBaseUrl(provider);
         String fullUrl     = provider.equals(AIModelManager.PROVIDER_GEMINI)
-                ? "https://generativelanguage.googleapis.com/v1/models/" + modelId + ":generateContent"
+                ? "https://generativelanguage.googleapis.com/v1beta/models/" + modelId + ":generateContent"
                 : baseUrl;
         Log.d("GeminiAPI", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
         Log.d("GeminiAPI", "Provider : " + provider);
@@ -175,9 +175,17 @@ public class CreateFragment extends Fragment {
         btnGenerateQuiz.setEnabled(false);
         btnGenerateQuiz.setText("AI đang soạn câu hỏi...");
 
-        // Lấy key: ưu tiên key từ manager, fallback về BuildConfig
+        // Lấy key: ưu tiên trong app, nếu không có lấy ở local.properties (BuildConfig)
         String apiKey = aiModelManager.nextKey(AIModelManager.PROVIDER_GEMINI);
-        if (apiKey == null || apiKey.isEmpty()) apiKey = BuildConfig.GEMINI_API_KEY;
+        if (apiKey == null || apiKey.isEmpty()) {
+            apiKey = BuildConfig.GEMINI_API_KEY;
+        }
+
+        if (apiKey == null || apiKey.isEmpty()) {
+            Toast.makeText(getContext(), "Chưa có API key Gemini. Hãy vào Cài đặt AI để thêm.", Toast.LENGTH_LONG).show();
+            resetBtn();
+            return;
+        }
         final String finalApiKey = apiKey;
 
         OkHttpClient client = new OkHttpClient.Builder()
@@ -201,12 +209,16 @@ public class CreateFragment extends Fragment {
             jsonBody.put("contents", contents);
 
             RequestBody body = RequestBody.create(jsonBody.toString(), JSON);
-            String url = "https://generativelanguage.googleapis.com/v1/models/" + modelId + ":generateContent?key=" + finalApiKey;
+            String url = "https://generativelanguage.googleapis.com/v1beta/models/" + modelId + ":generateContent?key=" + finalApiKey;
 
-            Request request = new Request.Builder().url(url).post(body).build();
-            Log.d("GeminiAPI", "Gửi request tới: " + url);
+            Log.d("GeminiAPI", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+            Log.d("GeminiAPI", "Provider : " + AIModelManager.PROVIDER_GEMINI);
+            Log.d("GeminiAPI", "Model ID : " + modelId);
+            Log.d("GeminiAPI", "URL      : " + url);
+            Log.d("GeminiAPI", "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
             Log.d("GeminiAPI", "Prompt length: " + prompt.length() + " chars");
 
+            Request request = new Request.Builder().url(url).post(body).build();
             client.newCall(request).enqueue(new Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
@@ -267,8 +279,19 @@ public class CreateFragment extends Fragment {
     private void callOpenAICompatible(String sourceContent, String quantity,
                                        String finalTitle, String provider, String model) {
         String apiKey = aiModelManager.nextKey(provider);
+        
+        // Fallback về local.properties (BuildConfig) nếu trong app trống
         if (apiKey == null || apiKey.isEmpty()) {
-            Toast.makeText(getContext(), "Chưa có API key cho " + provider + ". Vào AI Settings để thêm.", Toast.LENGTH_LONG).show();
+            if (provider.equals(AIModelManager.PROVIDER_GROQ)) {
+                apiKey = BuildConfig.GROQ_API_KEY;
+            } else if (provider.equals(AIModelManager.PROVIDER_OPENROUTER)) {
+                apiKey = BuildConfig.OPENROUTER_API_KEY;
+            }
+        }
+
+        if (apiKey == null || apiKey.isEmpty()) {
+            Toast.makeText(getContext(), "Chưa có API key cho " + provider + ". Hãy vào Cài đặt AI để thêm.", Toast.LENGTH_LONG).show();
+            resetBtn();
             return;
         }
         btnGenerateQuiz.setEnabled(false);

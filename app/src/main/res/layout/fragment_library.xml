@@ -22,14 +22,83 @@
             android:textSize="28sp"
             android:textStyle="bold" />
 
-        <TextView
-            android:id="@+id/tv_quiz_count"
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:text="0 saved quizzes"
-            android:textColor="@color/on_surface_secondary"
-            android:textSize="14sp" />
+            android:layout_marginTop="4dp">
+
+            <TextView
+                android:id="@+id/tv_quiz_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 saved quizzes"
+                android:textColor="@color/on_surface_secondary"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/tv_multi_select"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:text="Chọn nhiều"
+                    android:textColor="@color/primary"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true" />
+
+                <TextView
+                    android:id="@+id/tv_clear_all"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Xóa tất cả"
+                    android:textColor="#FF3B30"
+                    android:textSize="13sp"
+                    android:clickable="true"
+                    android:focusable="true" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <!-- Selection Toolbar (Hidden by default) -->
+        <LinearLayout
+            android:id="@+id/layout_selection_actions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="#FFF0F0"
+            android:padding="8dp"
+            android:gravity="center_vertical"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/tv_selected_count"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Đã chọn: 0"
+                android:textColor="#FF3B30"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btn_delete_selected"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Xóa mục đã chọn"
+                android:textColor="#FF3B30" />
+
+            <Button
+                android:id="@+id/btn_cancel_selection"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Hủy" />
+        </LinearLayout>
 
         <!-- Search Bar -->
         <EditText

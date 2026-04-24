@@ -10,6 +10,9 @@ import java.util.List;
 public interface QuizDao {
     @Insert
     void insert(Quiz quiz);
+    
+    @androidx.room.Update
+    void update(Quiz quiz);
 
     @Query("SELECT * FROM quizzes WHERE userEmail = :email ORDER BY id DESC")
     List<Quiz> getAllQuizzes(String email);
@@ -22,6 +25,9 @@ public interface QuizDao {
 
     @Query("DELETE FROM quizzes WHERE id = :quizId")
     void deleteById(int quizId);
+
+    @Query("DELETE FROM quizzes WHERE userEmail = :email")
+    void deleteAllQuizzes(String email);
 
     // Quiz Result operations
     @Insert
@@ -38,4 +44,7 @@ public interface QuizDao {
 
     @Query("SELECT AVG(timeSpentMillis) FROM quiz_results WHERE userEmail = :email")
     long getAverageTimeSpent(String email);
+
+    @Query("SELECT MAX(CAST(correctAnswers AS FLOAT) / totalQuestions * 100) FROM quiz_results WHERE quizId = :quizId")
+    Double getBestScoreForQuiz(int quizId);
 }
