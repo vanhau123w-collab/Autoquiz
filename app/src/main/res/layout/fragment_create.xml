@@ -57,7 +57,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/your_text_label"
+                android:text="Nội dung (Docx, Pdf)"
                 android:textStyle="bold"
                 android:textColor="@color/on_surface_variant"
                 android:textSize="14sp" />
@@ -75,8 +75,17 @@
                 android:id="@+id/btn_upload_docx"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
+                android:layout_marginEnd="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_upload"
+                app:tint="@color/primary" />
+
+            <ImageButton
+                android:id="@+id/btn_upload_pdf"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@android:drawable/ic_menu_edit"
                 app:tint="@color/primary" />
         </LinearLayout>
 

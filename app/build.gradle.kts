@@ -70,6 +70,9 @@ dependencies {
     // Thư viện đọc file .docx siêu nhẹ
     implementation("org.zwobble.mammoth:mammoth:1.5.0")
 
+    // Thư viện đọc file PDF
+    implementation("com.tom-roush:pdfbox-android:2.0.27.0")
+
     // Thư viện gửi Email JavaMail
     implementation(libs.android.mail)
     implementation(libs.android.activation)

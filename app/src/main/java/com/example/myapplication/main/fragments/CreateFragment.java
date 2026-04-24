@@ -27,6 +27,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import org.zwobble.mammoth.DocumentConverter;
 import org.zwobble.mammoth.Result;
+import com.tomroush.pdfbox.android.PDFBoxConfig;
+import com.tomroush.pdfbox.pdmodel.PDDocument;
+import com.tomroush.pdfbox.text.PDFTextStripper;
 import java.io.InputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -53,7 +56,16 @@ public class CreateFragment extends Fragment {
 
     private ActivityResultLauncher<String[]> getContent = registerForActivityResult(
             new ActivityResultContracts.OpenDocument(),
-            uri -> { if (uri != null) extractTextFromDocx(uri); }
+            uri -> {
+                if (uri != null) {
+                    String mimeType = requireContext().getContentResolver().getType(uri);
+                    if (mimeType != null && mimeType.contains("pdf")) {
+                        extractTextFromPdf(uri);
+                    } else {
+                        extractTextFromDocx(uri);
+                    }
+                }
+            }
     );
 
     @Nullable
@@ -82,6 +94,11 @@ public class CreateFragment extends Fragment {
 
         view.findViewById(R.id.btn_upload_docx).setOnClickListener(v ->
             getContent.launch(new String[]{"application/vnd.openxmlformats-officedocument.wordprocessingml.document"}));
+
+        view.findViewById(R.id.btn_upload_pdf).setOnClickListener(v ->
+            getContent.launch(new String[]{"application/pdf"}));
+
+        PDFBoxConfig.init(requireContext());
 
         btnQ5  = view.findViewById(R.id.btn_q5);
         btnQ10 = view.findViewById(R.id.btn_q10);
@@ -410,6 +427,25 @@ public class CreateFragment extends Fragment {
     private void resetBtn() {
         btnGenerateQuiz.setEnabled(true);
         btnGenerateQuiz.setText("Generate Quiz");
+    }
+
+    private void extractTextFromPdf(Uri uri) {
+        try {
+            if (getContext() == null) return;
+            InputStream inputStream = getContext().getContentResolver().openInputStream(uri);
+            if (inputStream != null) {
+                PDDocument document = PDDocument.load(inputStream);
+                PDFTextStripper stripper = new PDFTextStripper();
+                String text = stripper.getText(document);
+                etContent.setText(text);
+                document.close();
+                inputStream.close();
+                Toast.makeText(getContext(), "Đã tải văn bản từ file PDF!", Toast.LENGTH_SHORT).show();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Lỗi khi đọc PDF: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void extractTextFromDocx(Uri uri) {
