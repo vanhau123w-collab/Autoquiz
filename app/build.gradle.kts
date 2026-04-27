@@ -63,6 +63,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
     
     // Thư viện kết nối mạng siêu nhẹ và ổn định
     implementation("com.squareup.okhttp3:okhttp:4.12.0")

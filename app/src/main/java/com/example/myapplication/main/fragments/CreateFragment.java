@@ -369,7 +369,9 @@ public class CreateFragment extends Fragment {
                "4. Có 2 loại: \"single\" (1 đáp án đúng) và \"multiple\" (nhiều đáp án đúng)\n" +
                "5. Khoảng 70% câu single, 30% câu multiple\n" +
                "6. Trả lời bằng tiếng Việt\n" +
-               "7. Trả về JSON array thuần, KHÔNG có markdown, không giải thích\n\n" +
+               "7. Trả về JSON array thuần, KHÔNG có markdown, không giải thích\n" +
+               "8. TUYỆT ĐỐI KHÔNG tạo đáp án kiểu gom nhóm như: \"Tất cả đáp án trên đều đúng\", \"Cả A, B và C\", \"Không có đáp án nào đúng\", \"A và B đều đúng\". Mỗi đáp án PHẢI là một nội dung cụ thể, riêng biệt, có ý nghĩa độc lập.\n" +
+               "9. Với câu hỏi \"multiple\": các đáp án đúng phải được liệt kê riêng trong mảng \"answers\". Ví dụ nếu đáp án A, C, D đúng thì answers=[0,2,3].\n\n" +
                "Văn bản:\n" + sourceContent + "\n\n" +
                "Format JSON: [{\"question\":\"...\",\"options\":[\"A\",\"B\",\"C\",\"D\"],\"type\":\"single\",\"answers\":[0],\"difficulty\":1}]\n" +
                "Lưu ý: \"difficulty\" phải là số 1, 2 hoặc 3. \"answers\" luôn là mảng các số (index đáp án từ 0-3).";
@@ -470,16 +472,37 @@ public class CreateFragment extends Fragment {
     private void saveQuizToLibrary(String title, String aiData, String count) {
         if(getActivity() == null) return;
         try {
-            // Lưu vào Room Database
             SharedPreferences sharedPref = getContext().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
             String email = sharedPref.getString("CurrentUserEmail", "");
             
+            // Check duplicate title
+            int existing = AppDatabase.getInstance(getContext()).quizDao().getQuizCountByTitle(title, email);
+            if (existing > 0) {
+                getActivity().runOnUiThread(() -> {
+                    new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                        .setTitle("Trùng tên Quiz")
+                        .setMessage("Bộ quiz \"" + title + "\" đã tồn tại. Bạn muốn lưu với tên khác không?")
+                        .setPositiveButton("Lưu với tên mới", (d, w) -> {
+                            String newTitle = title + " (" + (existing + 1) + ")";
+                            doSaveQuiz(newTitle, aiData, count, email);
+                        })
+                        .setNegativeButton("Hủy", null)
+                        .show();
+                });
+                return;
+            }
+
+            doSaveQuiz(title, aiData, count, email);
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    private void doSaveQuiz(String title, String aiData, String count, String email) {
+        try {
             Quiz newQuiz = new Quiz(title, new SimpleDateFormat("MMM dd, yyyy", Locale.getDefault()).format(new Date()), count, aiData, email);
             AppDatabase.getInstance(getContext()).quizDao().insert(newQuiz);
             
-            // Auto switch to library tab
             if (getActivity() instanceof MainActivity) {
-                ((MainActivity) getActivity()).switchToTab(2); // Library tab
+                getActivity().runOnUiThread(() -> ((MainActivity) getActivity()).switchToTab(2));
             }
         } catch (Exception e) { e.printStackTrace(); }
     }

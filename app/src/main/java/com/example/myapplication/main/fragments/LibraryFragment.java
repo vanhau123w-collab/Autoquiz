@@ -18,6 +18,14 @@ import com.example.myapplication.R;
 import com.example.myapplication.data.AppDatabase;
 import com.example.myapplication.data.Quiz;
 import com.example.myapplication.quiz.QuizActivity;
+import com.example.myapplication.quiz.ReviewActivity;
+import com.example.myapplication.utils.QuizExportManager;
+import java.util.ArrayList;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import android.widget.Toast;
+import android.widget.ProgressBar;
+import androidx.core.content.ContextCompat;
 
 public class LibraryFragment extends Fragment {
 
@@ -30,8 +38,77 @@ public class LibraryFragment extends Fragment {
     private java.util.HashSet<Integer> selectedQuizIds = new java.util.HashSet<>();
     private View layoutSelectionActions;
     private TextView tvSelectedCount;
-    private TextView tvMultiSelect;
-    private TextView tvClearAll;
+    private android.widget.ImageButton btnMenu;
+    private androidx.swiperefreshlayout.widget.SwipeRefreshLayout swipeRefreshLayout;
+    private com.google.android.material.tabs.TabLayout tabLayout;
+    private int selectedTabIndex = 0;
+    private android.widget.EditText etSearch;
+    private String searchQuery = "";
+    
+    private Quiz quizToExport;
+    
+    private final ActivityResultLauncher<String> exportLauncher = registerForActivityResult(
+        new ActivityResultContracts.CreateDocument("application/json"),
+        uri -> {
+            if (uri != null && quizToExport != null) {
+                String json = QuizExportManager.exportToJSON(quizToExport);
+                if (json != null) {
+                    boolean success = QuizExportManager.writeToFile(requireContext(), uri, json);
+                    if (success) Toast.makeText(getContext(), "Đã xuất bộ quiz thành công!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    );
+
+    private final ActivityResultLauncher<String[]> importLauncher = registerForActivityResult(
+        new ActivityResultContracts.OpenDocument(),
+        uri -> {
+            if (uri != null) {
+                String json = QuizExportManager.readFromFile(requireContext(), uri);
+                if (json != null) {
+                    android.content.SharedPreferences sharedPref = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
+                    String email = sharedPref.getString("CurrentUserEmail", "");
+                    Quiz importedQuiz = QuizExportManager.importFromJSON(json, email);
+                    if (importedQuiz != null) {
+                        String fileName = QuizExportManager.getFileNameFromUri(requireContext(), uri);
+                        if (fileName != null && !fileName.isEmpty()) {
+                            importedQuiz.setTitle(fileName);
+                        }
+                        new Thread(() -> {
+                            int existing = AppDatabase.getInstance(getContext()).quizDao().getQuizCountByTitle(importedQuiz.getTitle(), email);
+                            if (existing > 0) {
+                                getActivity().runOnUiThread(() -> {
+                                    new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                                        .setTitle("Trùng tên Quiz")
+                                        .setMessage("Bộ quiz \"" + importedQuiz.getTitle() + "\" đã tồn tại. Bạn muốn lưu với tên khác không?")
+                                        .setPositiveButton("Lưu với tên mới", (d, w) -> {
+                                            importedQuiz.setTitle(importedQuiz.getTitle() + " (" + (existing + 1) + ")");
+                                            new Thread(() -> {
+                                                AppDatabase.getInstance(getContext()).quizDao().insert(importedQuiz);
+                                                getActivity().runOnUiThread(() -> {
+                                                    loadQuizzes();
+                                                    Toast.makeText(getContext(), "Đã nhập bộ quiz thành công!", Toast.LENGTH_SHORT).show();
+                                                });
+                                            }).start();
+                                        })
+                                        .setNegativeButton("Hủy", null)
+                                        .show();
+                                });
+                            } else {
+                                AppDatabase.getInstance(getContext()).quizDao().insert(importedQuiz);
+                                getActivity().runOnUiThread(() -> {
+                                    loadQuizzes();
+                                    Toast.makeText(getContext(), "Đã nhập bộ quiz thành công!", Toast.LENGTH_SHORT).show();
+                                });
+                            }
+                        }).start();
+                    } else {
+                        Toast.makeText(getContext(), "Tệp JSON không hợp lệ", Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        }
+    );
 
     @Nullable
     @Override
@@ -44,14 +121,39 @@ public class LibraryFragment extends Fragment {
         
         layoutSelectionActions = view.findViewById(R.id.layout_selection_actions);
         tvSelectedCount = view.findViewById(R.id.tv_selected_count);
-        tvMultiSelect = view.findViewById(R.id.tv_multi_select);
-        tvClearAll = view.findViewById(R.id.tv_clear_all);
+        btnMenu = view.findViewById(R.id.btn_library_menu);
 
-        tvClearAll.setOnClickListener(v -> showDeleteAllConfirm());
-        tvMultiSelect.setOnClickListener(v -> toggleEditMode(true));
+        btnMenu.setOnClickListener(v -> showLibraryPopupMenu(v));
         
+        swipeRefreshLayout = view.findViewById(R.id.srl_library);
+        swipeRefreshLayout.setOnRefreshListener(() -> {
+            loadQuizzes();
+            swipeRefreshLayout.setRefreshing(false);
+        });
+
+        tabLayout = view.findViewById(R.id.tab_layout_library);
+        tabLayout.addOnTabSelectedListener(new com.google.android.material.tabs.TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(com.google.android.material.tabs.TabLayout.Tab tab) {
+                selectedTabIndex = tab.getPosition();
+                filterAndDisplayQuizzes();
+            }
+            @Override public void onTabUnselected(com.google.android.material.tabs.TabLayout.Tab tab) {}
+            @Override public void onTabReselected(com.google.android.material.tabs.TabLayout.Tab tab) {}
+        });
+
         view.findViewById(R.id.btn_cancel_selection).setOnClickListener(v -> toggleEditMode(false));
         view.findViewById(R.id.btn_delete_selected).setOnClickListener(v -> showDeleteSelectedConfirm());
+
+        etSearch = view.findViewById(R.id.et_search);
+        etSearch.addTextChangedListener(new android.text.TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {
+                searchQuery = s.toString().trim().toLowerCase();
+                filterAndDisplayQuizzes();
+            }
+            @Override public void afterTextChanged(android.text.Editable s) {}
+        });
 
         loadQuizzes();
         return view;
@@ -61,10 +163,45 @@ public class LibraryFragment extends Fragment {
         isEditMode = enable;
         selectedQuizIds.clear();
         layoutSelectionActions.setVisibility(enable ? View.VISIBLE : View.GONE);
-        tvMultiSelect.setVisibility(enable ? View.GONE : View.VISIBLE);
-        tvClearAll.setVisibility(enable ? View.GONE : View.VISIBLE);
+        btnMenu.setVisibility(enable ? View.GONE : View.VISIBLE);
         updateSelectedCountText();
         loadQuizzes(); // Refresh UI to show checkboxes
+    }
+
+    private void showLibraryPopupMenu(View v) {
+        com.google.android.material.bottomsheet.BottomSheetDialog sheet = 
+            new com.google.android.material.bottomsheet.BottomSheetDialog(requireContext());
+        View sheetView = LayoutInflater.from(getContext()).inflate(R.layout.bottom_sheet_quiz_options, null);
+        sheet.setContentView(sheetView);
+
+        ((TextView) sheetView.findViewById(R.id.tv_sheet_title)).setText("Tùy chọn thư viện");
+        LinearLayout container = sheetView.findViewById(R.id.options_container);
+
+        String[][] items = {
+            {"📥", "Nhập Quiz từ file"},
+            {"☑️", "Chọn nhiều"},
+            {"🗑️", "Xóa tất cả"}
+        };
+
+        for (String[] item : items) {
+            View row = LayoutInflater.from(getContext()).inflate(R.layout.item_sheet_option, container, false);
+            ((TextView) row.findViewById(R.id.tv_option_icon)).setText(item[0]);
+            ((TextView) row.findViewById(R.id.tv_option_text)).setText(item[1]);
+            
+            if (item[1].contains("Xóa")) {
+                ((TextView) row.findViewById(R.id.tv_option_text)).setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.error));
+            }
+
+            row.setOnClickListener(rv -> {
+                sheet.dismiss();
+                if (item[1].contains("Nhập")) importLauncher.launch(new String[]{"application/json"});
+                else if (item[1].contains("Chọn")) toggleEditMode(true);
+                else if (item[1].contains("Xóa")) showDeleteAllConfirm();
+            });
+            container.addView(row);
+        }
+        sheet.show();
     }
 
     private void updateSelectedCountText() {
@@ -114,29 +251,42 @@ public class LibraryFragment extends Fragment {
         }
     }
 
+    private List<Quiz> cachedQuizzes = new ArrayList<>();
+
     private void loadQuizzes() {
         if (getContext() == null || quizListContainer == null) return;
-        quizListContainer.removeAllViews();
         
         try {
             android.content.SharedPreferences sharedPref = requireActivity().getSharedPreferences("UserPrefs", Context.MODE_PRIVATE);
             String email = sharedPref.getString("CurrentUserEmail", "");
             
-            List<Quiz> quizList = AppDatabase.getInstance(getContext()).quizDao().getAllQuizzes(email);
-            int count = quizList.size();
+            cachedQuizzes = AppDatabase.getInstance(getContext()).quizDao().getAllQuizzes(email);
+            filterAndDisplayQuizzes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-            if (count == 0) {
-                if (emptyState.getParent() != null) {
-                    ((ViewGroup) emptyState.getParent()).removeView(emptyState);
-                }
-                quizListContainer.addView(emptyState);
+    private void filterAndDisplayQuizzes() {
+        if (getContext() == null || quizListContainer == null) return;
+        quizListContainer.removeAllViews();
+        try {
+            List<Quiz> filteredList = new ArrayList<>();
+            for (Quiz q : cachedQuizzes) {
+                boolean isCompleted = q.getCompletedResults() != null && !q.getCompletedResults().isEmpty() && !q.getCompletedResults().equals("[]");
+                boolean matchesTab = (selectedTabIndex == 1) ? isCompleted : !isCompleted;
+                boolean matchesSearch = searchQuery.isEmpty() || q.getTitle().toLowerCase().contains(searchQuery);
+                if (matchesTab && matchesSearch) filteredList.add(q);
+            }
+
+            if (filteredList.isEmpty()) {
                 emptyState.setVisibility(View.VISIBLE);
-                tvTotalQuizzes.setText(getString(R.string.saved_quizzes_format, 0));
+                quizListContainer.addView(emptyState);
+                tvTotalQuizzes.setText("0 quizzes");
             } else {
-                tvTotalQuizzes.setText(getString(R.string.saved_quizzes_format, count));
                 emptyState.setVisibility(View.GONE);
-
-                for (Quiz quiz : quizList) {
+                tvTotalQuizzes.setText(filteredList.size() + " quizzes");
+                for (Quiz quiz : filteredList) {
                     addQuizCard(quiz);
                 }
             }
@@ -196,16 +346,17 @@ public class LibraryFragment extends Fragment {
             if (isEditMode) {
                 cbSelect.performClick();
             } else {
-                Intent intent = new Intent(getActivity(), QuizActivity.class);
-                intent.putExtra("QUIZ_ID", quiz.getId());
-                intent.putExtra("QUIZ_DATA", quiz.getJsonData());
-                intent.putExtra("QUIZ_TITLE", quiz.getTitle());
-                startActivity(intent);
+                showOptionsDialog(quiz);
             }
         });
         
         cardView.setOnLongClickListener(v -> {
-            if (!isEditMode) showRenameDialog(quiz);
+            if (!isEditMode) {
+                toggleEditMode(true);
+                cbSelect.setChecked(true);
+                selectedQuizIds.add(quiz.getId());
+                updateSelectedCountText();
+            }
             return true;
         });
 
@@ -219,6 +370,136 @@ public class LibraryFragment extends Fragment {
         });
 
         quizListContainer.addView(cardView);
+    }
+
+    private void showOptionsDialog(Quiz quiz) {
+        boolean hasResults = quiz.getCompletedResults() != null 
+                && !quiz.getCompletedResults().isEmpty() 
+                && !quiz.getCompletedResults().equals("[]");
+        boolean hasAiEval = quiz.getAiEvaluation() != null && !quiz.getAiEvaluation().isEmpty();
+
+        com.google.android.material.bottomsheet.BottomSheetDialog sheet =
+            new com.google.android.material.bottomsheet.BottomSheetDialog(requireContext());
+        View sheetView = LayoutInflater.from(getContext()).inflate(R.layout.bottom_sheet_quiz_options, null);
+        sheet.setContentView(sheetView);
+
+        ((TextView) sheetView.findViewById(R.id.tv_sheet_title)).setText(quiz.getTitle());
+        LinearLayout container = sheetView.findViewById(R.id.options_container);
+
+        // Build options dynamically
+        List<String[]> items = new ArrayList<>();
+        items.add(new String[]{"📝", "Làm bài", "do_quiz"});
+        if (hasResults) items.add(new String[]{"✨", "Xem lại bài làm gần nhất", "review"});
+        if (hasAiEval) items.add(new String[]{"🤖", "Xem đánh giá AI", "view_ai"});
+        if (hasResults && !hasAiEval) items.add(new String[]{"🤖", "Yêu cầu AI đánh giá", "request_ai"});
+        items.add(new String[]{"✏️", "Đổi tên", "rename"});
+        items.add(new String[]{"📤", "Chia sẻ (Xuất file JSON)", "export"});
+        items.add(new String[]{"🗑️", "Xóa", "delete"});
+
+        for (String[] item : items) {
+            View row = LayoutInflater.from(getContext()).inflate(R.layout.item_sheet_option, container, false);
+            ((TextView) row.findViewById(R.id.tv_option_icon)).setText(item[0]);
+            ((TextView) row.findViewById(R.id.tv_option_text)).setText(item[1]);
+
+            if (item[2].equals("delete")) {
+                ((TextView) row.findViewById(R.id.tv_option_text)).setTextColor(
+                    ContextCompat.getColor(requireContext(), R.color.error));
+            }
+
+            row.setOnClickListener(rv -> {
+                sheet.dismiss();
+                switch (item[2]) {
+                    case "do_quiz":
+                        Intent intent = new Intent(getActivity(), QuizActivity.class);
+                        intent.putExtra("QUIZ_ID", quiz.getId());
+                        intent.putExtra("QUIZ_DATA", quiz.getJsonData());
+                        intent.putExtra("QUIZ_TITLE", quiz.getTitle());
+                        intent.putExtra("IS_RESUME", false);
+                        startActivity(intent);
+                        break;
+                    case "review":
+                        try {
+                            org.json.JSONArray array = new org.json.JSONArray(quiz.getCompletedResults());
+                            int[] answers = new int[array.length()];
+                            for (int i = 0; i < array.length(); i++) answers[i] = array.getInt(i);
+                            Intent reviewIntent = new Intent(getActivity(), ReviewActivity.class);
+                            reviewIntent.putExtra("QUIZ_ID", quiz.getId());
+                            reviewIntent.putExtra("QUIZ_DATA", quiz.getJsonData());
+                            reviewIntent.putExtra("USER_ANSWERS", answers);
+                            startActivity(reviewIntent);
+                        } catch (Exception e) {
+                            Toast.makeText(getContext(), "Không thể tải kết quả cũ", Toast.LENGTH_SHORT).show();
+                        }
+                        break;
+                    case "view_ai":
+                        showAiEvaluationDialog(quiz);
+                        break;
+                    case "request_ai":
+                        requestAiEvaluationForQuiz(quiz);
+                        break;
+                    case "rename":
+                        showRenameDialog(quiz);
+                        break;
+                    case "export":
+                        quizToExport = quiz;
+                        exportLauncher.launch(quiz.getTitle().replaceAll("[\\\\/:*?\"<>|]", "_") + ".json");
+                        break;
+                    case "delete":
+                        new androidx.appcompat.app.AlertDialog.Builder(requireContext())
+                            .setTitle(getString(R.string.delete_quiz))
+                            .setMessage(getString(R.string.delete_quiz_msg))
+                            .setPositiveButton(getString(R.string.delete_confirm), (d, w) -> deleteQuiz(quiz))
+                            .setNegativeButton(getString(R.string.cancel), null)
+                            .show();
+                        break;
+                }
+            });
+            container.addView(row);
+        }
+        sheet.show();
+    }
+
+    private void requestAiEvaluationForQuiz(Quiz quiz) {
+        try {
+            org.json.JSONArray results = new org.json.JSONArray(quiz.getCompletedResults());
+            int[] userAnswers = new int[results.length()];
+            for (int i = 0; i < results.length(); i++) {
+                userAnswers[i] = results.getInt(i);
+            }
+            com.example.myapplication.utils.AIEvaluationManager.evaluateQuiz(
+                    getActivity(), quiz.getId(), quiz.getJsonData(), userAnswers, quiz.getTitle(),
+                    (success, resultOrError) -> {
+                        if (success) loadQuizzes();
+                    }
+                );
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), "Không thể phân tích kết quả cũ", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void showAiEvaluationDialog(Quiz quiz) {
+        com.google.android.material.bottomsheet.BottomSheetDialog bottomSheet = 
+            new com.google.android.material.bottomsheet.BottomSheetDialog(requireContext());
+        View sheetView = LayoutInflater.from(getContext()).inflate(R.layout.layout_ai_explanation, null);
+        bottomSheet.setContentView(sheetView);
+
+        TextView tvTitle = sheetView.findViewById(R.id.tv_explain_title);
+        TextView tvContent = sheetView.findViewById(R.id.tv_explain_content);
+        ProgressBar progressBar = sheetView.findViewById(R.id.progress_bar_explain);
+
+        tvTitle.setText("🤖 Đánh giá AI - " + quiz.getTitle());
+        progressBar.setVisibility(View.GONE);
+
+        String html = quiz.getAiEvaluation()
+                .replaceAll("\\*\\*(.*?)\\*\\*", "<b>$1</b>")
+                .replaceAll("\\n", "<br>");
+        tvContent.setMovementMethod(android.text.method.LinkMovementMethod.getInstance());
+        tvContent.setText(android.text.Html.fromHtml(html, android.text.Html.FROM_HTML_MODE_COMPACT));
+
+        sheetView.findViewById(R.id.btn_close_sheet).setOnClickListener(v -> bottomSheet.dismiss());
+        sheetView.findViewById(R.id.btn_got_it).setOnClickListener(v -> bottomSheet.dismiss());
+        bottomSheet.show();
     }
 
     private void showRenameDialog(Quiz quiz) {

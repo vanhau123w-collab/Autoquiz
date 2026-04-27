@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="16dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="8dp"
+    app:cardBackgroundColor="@color/surface">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Loading animation -->
+            <ProgressBar
+                android:id="@+id/pb_eval_loading"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center_horizontal"
+                android:indeterminateTint="@color/primary" />
+
+            <TextView
+                android:id="@+id/tv_eval_status"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="🤖 AI đang phân tích bài làm..."
+                android:textColor="@color/on_surface"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <TextView
+                android:id="@+id/tv_eval_subtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="Vui lòng đợi trong giây lát"
+                android:textColor="@color/on_surface_secondary"
+                android:textSize="13sp"
+                android:gravity="center" />
+
+            <!-- AI evaluation content (initially hidden) -->
+            <TextView
+                android:id="@+id/tv_eval_content"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:lineSpacingMultiplier="1.4"
+                android:textColor="@color/on_surface"
+                android:textSize="14sp"
+                android:visibility="gone" />
+
+            <!-- Continue button (initially hidden) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_continue_eval"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="20dp"
+                android:text="Tiếp tục xem kết quả →"
+                android:textAllCaps="false"
+                android:textSize="14sp"
+                android:visibility="gone"
+                app:cornerRadius="12dp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.cardview.widget.CardView>

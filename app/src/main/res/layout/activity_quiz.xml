@@ -157,6 +157,7 @@
                 android:layout_marginTop="32dp">
 
                 <TextView
+                    android:id="@+id/tv_select_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="SELECT ONE ANSWER"
@@ -221,6 +222,15 @@
                                 android:textSize="16sp" />
                         </com.google.android.material.card.MaterialCardView>
 
+                        <CheckBox
+                            android:id="@+id/cb_option_a"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:visibility="gone" />
+
                         <TextView
                             android:id="@+id/tv_option_a"
                             android:layout_width="0dp"
@@ -278,6 +288,15 @@
                                 android:textStyle="bold"
                                 android:textSize="16sp" />
                         </com.google.android.material.card.MaterialCardView>
+
+                        <CheckBox
+                            android:id="@+id/cb_option_b"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/tv_option_b"
@@ -337,6 +356,15 @@
                                 android:textSize="16sp" />
                         </com.google.android.material.card.MaterialCardView>
 
+                        <CheckBox
+                            android:id="@+id/cb_option_c"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:visibility="gone" />
+
                         <TextView
                             android:id="@+id/tv_option_c"
                             android:layout_width="0dp"
@@ -394,6 +422,15 @@
                                 android:textStyle="bold"
                                 android:textSize="16sp" />
                         </com.google.android.material.card.MaterialCardView>
+
+                        <CheckBox
+                            android:id="@+id/cb_option_d"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="8dp"
+                            android:clickable="false"
+                            android:focusable="false"
+                            android:visibility="gone" />
 
                         <TextView
                             android:id="@+id/tv_option_d"

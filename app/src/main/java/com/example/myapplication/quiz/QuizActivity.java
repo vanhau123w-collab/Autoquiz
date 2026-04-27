@@ -14,6 +14,10 @@ import com.google.android.material.card.MaterialCardView;
 import com.google.android.material.progressindicator.LinearProgressIndicator;
 
 import com.example.myapplication.R;
+import com.example.myapplication.data.AppDatabase;
+import com.example.myapplication.data.Quiz;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +36,8 @@ public class QuizActivity extends AppCompatActivity {
     private MaterialCardView[] indicators = new MaterialCardView[4];
     private TextView[] indicatorTexts = new TextView[4];
     private ImageView[] checkIcons = new ImageView[4]; 
+    private android.widget.CheckBox[] checkBoxes = new android.widget.CheckBox[4];
+    private TextView tvSelectLabel;
     
     private MaterialButton btnNext, btnBack;
     private ImageView btnClose;
@@ -74,9 +80,46 @@ public class QuizActivity extends AppCompatActivity {
         }
         
         startTime = System.currentTimeMillis();
+        
+        boolean isResume = getIntent().getBooleanExtra("IS_RESUME", true);
+        if (isResume) {
+            restoreProgress();
+        } else if (quizId != -1) {
+            new Thread(() -> {
+                try {
+                    Quiz quiz = AppDatabase.getInstance(this).quizDao().getQuizById(quizId);
+                    if (quiz != null) {
+                        quiz.setLastPosition(0);
+                        quiz.setLastProgress(null);
+                        AppDatabase.getInstance(this).quizDao().update(quiz);
+                    }
+                } catch (Exception e) { e.printStackTrace(); }
+            }).start();
+        }
+        
         updateUI();
 
         setupListeners();
+        
+        loadDailyStreak();
+    }
+    
+    private void loadDailyStreak() {
+        new Thread(() -> {
+            try {
+                android.content.SharedPreferences sharedPref = getSharedPreferences("UserPrefs", android.content.Context.MODE_PRIVATE);
+                String email = sharedPref.getString("CurrentUserEmail", "");
+                java.util.List<com.example.myapplication.data.QuizResult> results = com.example.myapplication.data.AppDatabase.getInstance(this).quizDao().getAllResults(email);
+                int streak = com.example.myapplication.utils.StreakUtils.calculateCurrentStreak(results);
+                runOnUiThread(() -> {
+                    if (tvStreak != null) {
+                        tvStreak.setText("🔥 " + streak);
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }).start();
     }
 
     private void initViews() {
@@ -113,6 +156,13 @@ public class QuizActivity extends AppCompatActivity {
         checkIcons[2] = findViewById(R.id.check_icon_c);
         checkIcons[3] = findViewById(R.id.check_icon_d);
 
+        checkBoxes[0] = findViewById(R.id.cb_option_a);
+        checkBoxes[1] = findViewById(R.id.cb_option_b);
+        checkBoxes[2] = findViewById(R.id.cb_option_c);
+        checkBoxes[3] = findViewById(R.id.cb_option_d);
+
+        tvSelectLabel = findViewById(R.id.tv_select_label);
+
         btnNext = findViewById(R.id.btn_next_quiz);
         btnBack = findViewById(R.id.btn_back_quiz);
         btnClose = findViewById(R.id.close_quiz);
@@ -135,21 +185,6 @@ public class QuizActivity extends AppCompatActivity {
                 // Submit multi-answer
                 if (!isQuestionAnswered[currentQuestionIndex]) {
                     isQuestionAnswered[currentQuestionIndex] = true;
-                    // Streak logic for multi-select
-                    List<Integer> userAns = userMultiAnswers[currentQuestionIndex];
-                    if (userAns.size() == q.correctAnswers.length) {
-                        boolean allCorrect = true;
-                        for (int ans : q.correctAnswers) {
-                            if (!userAns.contains(ans)) {
-                                allCorrect = false;
-                                break;
-                            }
-                        }
-                        if (allCorrect) currentStreak++;
-                        else currentStreak = 0;
-                    } else {
-                        currentStreak = 0;
-                    }
                     highlightSelectedOption(-1);
                     return; // Wait for next click to proceed
                 }
@@ -161,6 +196,7 @@ public class QuizActivity extends AppCompatActivity {
             }
 
             if (currentQuestionIndex < questionList.size() - 1) {
+                saveProgress();
                 currentQuestionIndex++;
                 updateUI();
             } else {
@@ -170,15 +206,91 @@ public class QuizActivity extends AppCompatActivity {
 
         btnBack.setOnClickListener(v -> {
             if (currentQuestionIndex > 0) {
+                saveProgress();
                 currentQuestionIndex--;
                 updateUI();
             }
         });
 
-        btnClose.setOnClickListener(v -> finish());
+        btnClose.setOnClickListener(v -> {
+            saveProgress();
+            finish();
+        });
     }
 
+    private void saveProgress() {
+        if (quizId == -1) return;
+        new Thread(() -> {
+            try {
+                Quiz quiz = AppDatabase.getInstance(this).quizDao().getQuizById(quizId);
+                if (quiz != null) {
+                    JSONObject progress = new JSONObject();
+                    JSONArray singleAns = new JSONArray();
+                    for (int ans : userAnswers) singleAns.put(ans);
+                    progress.put("single", singleAns);
+
+                    JSONArray multiAns = new JSONArray();
+                    for (List<Integer> list : userMultiAnswers) {
+                        JSONArray item = new JSONArray();
+                        for (int val : list) item.put(val);
+                        multiAns.put(item);
+                    }
+                    progress.put("multi", multiAns);
+
+                    quiz.setLastPosition(currentQuestionIndex);
+                    quiz.setLastProgress(progress.toString());
+                    AppDatabase.getInstance(this).quizDao().update(quiz);
+                }
+            } catch (Exception e) { e.printStackTrace(); }
+        }).start();
+    }
+
+    private void restoreProgress() {
+        if (quizId == -1) return;
+        try {
+            Quiz quiz = AppDatabase.getInstance(this).quizDao().getQuizById(quizId);
+            if (quiz != null && quiz.getLastProgress() != null) {
+                JSONObject progress = new JSONObject(quiz.getLastProgress());
+                
+                JSONArray singleAns = progress.getJSONArray("single");
+                for (int i = 0; i < singleAns.length() && i < userAnswers.length; i++) {
+                    userAnswers[i] = singleAns.getInt(i);
+                    if (userAnswers[i] != -1) isQuestionAnswered[i] = true;
+                }
+
+                JSONArray multiAns = progress.getJSONArray("multi");
+                for (int i = 0; i < multiAns.length() && i < userMultiAnswers.length; i++) {
+                    JSONArray item = multiAns.getJSONArray(i);
+                    userMultiAnswers[i].clear();
+                    for (int j = 0; j < item.length(); j++) {
+                        userMultiAnswers[i].add(item.getInt(j));
+                        isQuestionAnswered[i] = true;
+                    }
+                }
+                currentQuestionIndex = quiz.getLastPosition();
+            }
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+
+
     private void finishQuiz() {
+        if (quizId != -1) {
+            new Thread(() -> {
+                try {
+                    Quiz quiz = AppDatabase.getInstance(this).quizDao().getQuizById(quizId);
+                    if (quiz != null) {
+                        JSONArray results = new JSONArray();
+                        for (int ans : userAnswers) results.put(ans);
+                        quiz.setCompletedResults(results.toString());
+                        quiz.setLastPosition(0);
+                        quiz.setLastProgress(null);
+                        AppDatabase.getInstance(this).quizDao().update(quiz);
+                    }
+                } catch (Exception e) { e.printStackTrace(); }
+            }).start();
+        }
+
         int correctCount = 0;
         int easyCount = 0, mediumCount = 0, hardCount = 0;
         int easyCorrect = 0, mediumCorrect = 0, hardCorrect = 0;
@@ -220,25 +332,63 @@ public class QuizActivity extends AppCompatActivity {
 
         long timeSpent = System.currentTimeMillis() - startTime;
 
-        // Start QuizResultActivity
+        final int fCorrectCount = correctCount;
+        final int fEasyCount = easyCount, fMedCount = mediumCount, fHardCount = hardCount;
+        final int fEasyCorrect = easyCorrect, fMedCorrect = mediumCorrect, fHardCorrect = hardCorrect;
+        final long fTimeSpent = timeSpent;
+        
+        String title = getIntent().getStringExtra("QUIZ_TITLE");
+        if (title == null) title = "Quiz";
+        final String fTitle = title;
+
+        new Thread(() -> {
+            boolean needsEvaluation = false;
+            try {
+                if (quizId != -1) {
+                    Quiz quiz = AppDatabase.getInstance(this).quizDao().getQuizById(quizId);
+                    if (quiz != null && (quiz.getAiEvaluation() == null || quiz.getAiEvaluation().isEmpty())) {
+                        needsEvaluation = true;
+                    }
+                }
+            } catch (Exception e) { e.printStackTrace(); }
+
+            final boolean doEval = needsEvaluation;
+            runOnUiThread(() -> {
+                if (doEval) {
+                    com.example.myapplication.utils.AIEvaluationManager.evaluateQuiz(
+                            this, quizId, currentQuizJson, userAnswers, fTitle,
+                            (success, resultOrError) -> navigateToResult(fCorrectCount, questionList.size(),
+                                    fEasyCount, fMedCount, fHardCount,
+                                    fEasyCorrect, fMedCorrect, fHardCorrect, fTimeSpent)
+                    );
+                } else {
+                    navigateToResult(fCorrectCount, questionList.size(),
+                            fEasyCount, fMedCount, fHardCount,
+                            fEasyCorrect, fMedCorrect, fHardCorrect, fTimeSpent);
+                }
+            });
+        }).start();
+    }
+
+
+
+    private void navigateToResult(int correctCount, int total,
+            int easyCount, int medCount, int hardCount,
+            int easyCorrect, int medCorrect, int hardCorrect, long timeSpent) {
         Intent intent = new Intent(this, QuizResultActivity.class);
         intent.putExtra("CORRECT_ANSWERS", correctCount);
-        intent.putExtra("TOTAL_QUESTIONS", questionList.size());
-        
-        // Passing detailed stats
+        intent.putExtra("TOTAL_QUESTIONS", total);
         intent.putExtra("EASY_COUNT", easyCount);
-        intent.putExtra("MEDIUM_COUNT", mediumCount);
+        intent.putExtra("MEDIUM_COUNT", medCount);
         intent.putExtra("HARD_COUNT", hardCount);
         intent.putExtra("EASY_CORRECT", easyCorrect);
-        intent.putExtra("MEDIUM_CORRECT", mediumCorrect);
+        intent.putExtra("MEDIUM_CORRECT", medCorrect);
         intent.putExtra("HARD_CORRECT", hardCorrect);
-
         intent.putExtra("TIME_SPENT", timeSpent);
-        intent.putExtra("QUIZ_DATA", currentQuizJson); 
+        intent.putExtra("QUIZ_DATA", currentQuizJson);
         intent.putExtra("USER_ANSWERS", userAnswers);
         intent.putExtra("QUIZ_ID", quizId);
         startActivity(intent);
-        
         finish();
     }
 
@@ -253,19 +403,17 @@ public class QuizActivity extends AppCompatActivity {
             } else {
                 selected.add(index);
             }
+            // Update checkbox state
+            for (int i = 0; i < 4; i++) {
+                checkBoxes[i].setChecked(selected.contains(i));
+            }
             highlightSelectedOption(index);
         } else {
             // Single-select mode
             if (isQuestionAnswered[currentQuestionIndex]) return;
             userAnswers[currentQuestionIndex] = index;
             isQuestionAnswered[currentQuestionIndex] = true;
-            
-            // Streak logic for single-select
-            if (index == q.correctAnswerIndex) {
-                currentStreak++;
-            } else {
-                currentStreak = 0;
-            }
+            // Streak logic removed to use daily streak
             
             highlightSelectedOption(index);
         }
@@ -382,16 +530,37 @@ public class QuizActivity extends AppCompatActivity {
         Question q = questionList.get(currentQuestionIndex);
         tvQuestionText.setText(q.question);
         
-        // Display difficulty badge
-        String difficultyText = q.difficulty == 1 ? "DỄ" : (q.difficulty == 3 ? "KHÓ" : "TRUNG BÌNH");
-        tvCategory.setText(difficultyText);
+        // Display difficulty badge with distinct colors
+        if (q.difficulty == 1) {
+            tvCategory.setText("DỄ");
+            tvCategory.setTextColor(Color.parseColor("#16A34A")); // green
+            tvCategory.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#F0FDF4"))); // green light
+        } else if (q.difficulty == 3) {
+            tvCategory.setText("KHÓ");
+            tvCategory.setTextColor(Color.parseColor("#DC2626")); // red
+            tvCategory.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FEF2F2"))); // red light
+        } else {
+            tvCategory.setText("TRUNG BÌNH");
+            tvCategory.setTextColor(Color.parseColor("#EA580C")); // orange
+            tvCategory.setBackgroundTintList(android.content.res.ColorStateList.valueOf(Color.parseColor("#FFF7ED"))); // orange light
+        }
         
-        // Display question type
+        // Display question type & checkbox visibility
         if (q.type.equals("multiple")) {
             tvQuestionType.setText("CHỌN NHIỀU ĐÁP ÁN");
             tvQuestionType.setVisibility(View.VISIBLE);
+            tvSelectLabel.setText("CHỌN NHIỀU ĐÁP ÁN");
+            for (int i = 0; i < 4; i++) {
+                checkBoxes[i].setVisibility(View.VISIBLE);
+                checkBoxes[i].setChecked(userMultiAnswers[currentQuestionIndex].contains(i));
+            }
         } else {
             tvQuestionType.setVisibility(View.GONE);
+            tvSelectLabel.setText("SELECT ONE ANSWER");
+            for (int i = 0; i < 4; i++) {
+                checkBoxes[i].setVisibility(View.GONE);
+                checkBoxes[i].setChecked(false);
+            }
         }
         
         optionTexts[0].setText(q.options[0]);

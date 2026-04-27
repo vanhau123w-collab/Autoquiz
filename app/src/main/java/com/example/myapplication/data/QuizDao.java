@@ -14,6 +14,9 @@ public interface QuizDao {
     @androidx.room.Update
     void update(Quiz quiz);
 
+    @Query("SELECT * FROM quizzes WHERE id = :id")
+    Quiz getQuizById(int id);
+
     @Query("SELECT * FROM quizzes WHERE userEmail = :email ORDER BY id DESC")
     List<Quiz> getAllQuizzes(String email);
 
@@ -47,4 +50,7 @@ public interface QuizDao {
 
     @Query("SELECT MAX(CAST(correctAnswers AS FLOAT) / totalQuestions * 100) FROM quiz_results WHERE quizId = :quizId")
     Double getBestScoreForQuiz(int quizId);
+
+    @Query("SELECT COUNT(*) FROM quizzes WHERE title = :title AND userEmail = :email")
+    int getQuizCountByTitle(String title, String email);
 }

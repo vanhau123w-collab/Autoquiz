@@ -16,25 +16,45 @@
         android:id="@+id/btn_close_review"
         android:layout_width="48dp"
         android:layout_height="48dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="12dp"
         android:background="?android:attr/selectableItemBackgroundBorderless"
         android:src="@android:drawable/ic_menu_close_clear_cancel"
-        app:layout_constraintBottom_toBottomOf="@id/header_bg"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/header_bg"
         app:tint="@color/on_surface" />
 
     <TextView
+        android:id="@+id/tv_review_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:text="@string/review_title"
         android:textColor="@color/on_surface"
         android:textSize="20sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/header_bg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/header_bg" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_retry_wrong_review"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        android:layout_width="wrap_content"
+        android:layout_height="32dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginBottom="8dp"
+        android:insetTop="0dp"
+        android:insetBottom="0dp"
+        android:minHeight="0dp"
+        android:paddingTop="0dp"
+        android:paddingBottom="0dp"
+        android:text="↻ Làm lại câu sai"
+        android:textAllCaps="false"
+        android:textColor="@color/primary"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@id/header_bg"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_review"

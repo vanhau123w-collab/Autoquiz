@@ -13,6 +13,10 @@ public class Quiz {
     private String count;
     private String jsonData;
     private String userEmail;
+    private int lastPosition = 0; // Lưu câu đang làm dở
+    private String lastProgress;  // Lưu JSON đáp án đã chọn
+    private String completedResults; // Lưu JSON đáp án đã hoàn thành để xem lại sau
+    private String aiEvaluation; // Lưu kết quả đánh giá của AI (chỉ 1 lần)
 
     public Quiz(String title, String date, String count, String jsonData, String userEmail) {
         this.title = title;
@@ -36,4 +40,13 @@ public class Quiz {
 
     public String getUserEmail() { return userEmail; }
     public void setUserEmail(String userEmail) { this.userEmail = userEmail; }
+
+    public int getLastPosition() { return lastPosition; }
+    public void setLastPosition(int lastPosition) { this.lastPosition = lastPosition; }
+    public String getLastProgress() { return lastProgress; }
+    public void setLastProgress(String lastProgress) { this.lastProgress = lastProgress; }
+    public String getCompletedResults() { return completedResults; }
+    public void setCompletedResults(String completedResults) { this.completedResults = completedResults; }
+    public String getAiEvaluation() { return aiEvaluation; }
+    public void setAiEvaluation(String aiEvaluation) { this.aiEvaluation = aiEvaluation; }
 }

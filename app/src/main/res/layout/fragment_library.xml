@@ -1,166 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/srl_library"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background"
-    android:clipToPadding="false"
-    android:paddingBottom="100dp">
+    android:layout_height="match_parent">
 
-    <LinearLayout
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="24dp">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="@string/library_title"
-            android:textColor="@color/on_surface"
-            android:textSize="28sp"
-            android:textStyle="bold" />
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp">
-
-            <TextView
-                android:id="@+id/tv_quiz_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="0 saved quizzes"
-                android:textColor="@color/on_surface_secondary"
-                android:textSize="14sp" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/tv_multi_select"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
-                    android:text="Chọn nhiều"
-                    android:textColor="@color/primary"
-                    android:textSize="13sp"
-                    android:clickable="true"
-                    android:focusable="true" />
-
-                <TextView
-                    android:id="@+id/tv_clear_all"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Xóa tất cả"
-                    android:textColor="#FF3B30"
-                    android:textSize="13sp"
-                    android:clickable="true"
-                    android:focusable="true" />
-            </LinearLayout>
-        </RelativeLayout>
-
-        <!-- Selection Toolbar (Hidden by default) -->
-        <LinearLayout
-            android:id="@+id/layout_selection_actions"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:background="#FFF0F0"
-            android:padding="8dp"
-            android:gravity="center_vertical"
-            android:visibility="gone">
-
-            <TextView
-                android:id="@+id/tv_selected_count"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="Đã chọn: 0"
-                android:textColor="#FF3B30"
-                android:textStyle="bold" />
-
-            <Button
-                android:id="@+id/btn_delete_selected"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Xóa mục đã chọn"
-                android:textColor="#FF3B30" />
-
-            <Button
-                android:id="@+id/btn_cancel_selection"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Hủy" />
-        </LinearLayout>
-
-        <!-- Search Bar -->
-        <EditText
-            android:id="@+id/et_search"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginTop="24dp"
-            android:background="@drawable/bg_input_field"
-            android:drawableStart="@android:drawable/ic_menu_search"
-            android:drawablePadding="12dp"
-            android:hint="@string/search_hint"
-            android:inputType="text"
-            android:paddingHorizontal="16dp"
-            android:textColor="@color/on_surface"
-            android:textColorHint="@color/outline_variant"
-            android:textSize="14sp" />
+        android:layout_height="match_parent"
+        android:background="@color/background"
+        android:clipToPadding="false"
+        android:paddingBottom="100dp">
 
         <LinearLayout
-            android:id="@+id/library_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="24dp">
 
-            <!-- Empty State -->
-            <LinearLayout
-                android:id="@+id/empty_state"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
-                android:gravity="center"
-                android:orientation="vertical"
+                android:layout_marginTop="24dp">
+
+                <TextView
+                    android:id="@+id/tv_library_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/library_title"
+                    android:textColor="@color/on_surface"
+                    android:textSize="28sp"
+                    android:textStyle="bold" />
+
+                <RelativeLayout
+                    android:id="@+id/layout_header"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tv_library_title"
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:id="@+id/tv_quiz_count"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="0 saved quizzes"
+                        android:textColor="@color/on_surface_secondary"
+                        android:textSize="14sp" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:orientation="horizontal">
+
+                        <ImageButton
+                            android:id="@+id/btn_library_menu"
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:src="@android:drawable/ic_menu_more"
+                            app:tint="@color/on_surface_secondary" />
+                    </LinearLayout>
+                </RelativeLayout>
+            </RelativeLayout>
+
+            <!-- Selection Toolbar (Hidden by default) -->
+            <LinearLayout
+                android:id="@+id/layout_selection_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="#FFF0F0"
+                android:padding="8dp"
+                android:gravity="center_vertical"
                 android:visibility="gone">
 
                 <TextView
-                    android:layout_width="80dp"
-                    android:layout_height="80dp"
-                    android:background="@drawable/bg_icon_blue"
-                    android:gravity="center"
-                    android:text="📭"
-                    android:textSize="40sp" />
-
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:id="@+id/tv_selected_count"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/no_quizzes"
-                    android:textColor="@color/on_surface"
-                    android:textSize="18sp"
+                    android:layout_weight="1"
+                    android:text="Đã chọn: 0"
+                    android:textColor="#FF3B30"
                     android:textStyle="bold" />
 
-                <TextView
+                <Button
+                    android:id="@+id/btn_delete_selected"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
+                    android:text="Xóa mục đã chọn"
+                    android:textColor="#FF3B30" />
+
+                <Button
+                    android:id="@+id/btn_cancel_selection"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hủy" />
+            </LinearLayout>
+
+            <!-- Search Bar -->
+            <EditText
+                android:id="@+id/et_search"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginTop="24dp"
+                android:background="@drawable/bg_input_field"
+                android:drawableStart="@android:drawable/ic_menu_search"
+                android:drawablePadding="12dp"
+                android:hint="@string/search_hint"
+                android:inputType="text"
+                android:paddingHorizontal="16dp"
+                android:textColor="@color/on_surface"
+                android:textColorHint="@color/outline_variant"
+                android:textSize="14sp" />
+
+            <com.google.android.material.tabs.TabLayout
+                android:id="@+id/tab_layout_library"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:background="@android:color/transparent"
+                app:tabIndicatorColor="@color/primary"
+                app:tabSelectedTextColor="@color/primary"
+                app:tabTextColor="@color/on_surface_secondary"
+                app:tabIndicatorHeight="3dp"
+                app:tabRippleColor="@null">
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ĐANG TIẾN HÀNH" />
+
+                <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ĐÃ HOÀN THÀNH" />
+            </com.google.android.material.tabs.TabLayout>
+
+            <LinearLayout
+                android:id="@+id/library_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="vertical">
+
+                <!-- Empty State -->
+                <LinearLayout
+                    android:id="@+id/empty_state"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="40dp"
                     android:gravity="center"
-                    android:text="@string/create_first_quiz"
-                    android:textColor="@color/on_surface_secondary"
-                    android:textSize="14sp" />
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="80dp"
+                        android:background="@drawable/bg_icon_blue"
+                        android:gravity="center"
+                        android:text="📭"
+                        android:textSize="40sp" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="@string/no_quizzes"
+                        android:textColor="@color/on_surface"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="8dp"
+                        android:gravity="center"
+                        android:text="@string/create_first_quiz"
+                        android:textColor="@color/on_surface_secondary"
+                        android:textSize="14sp" />
+                </LinearLayout>
+
             </LinearLayout>
 
         </LinearLayout>
-
-    </LinearLayout>
-</androidx.core.widget.NestedScrollView>
+    </androidx.core.widget.NestedScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
